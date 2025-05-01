@@ -21,6 +21,8 @@
 #    pragma clang system_header
 #elif defined __GNUC__
 #    pragma GCC system_header
+#elif defined __QNX__
+#    pragma QCC system_header
 #endif
 
 // start catch_suppress_warnings.h

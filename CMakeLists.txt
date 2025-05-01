@@ -42,8 +42,11 @@ set_directory_options()
 include(Static)
 set_static_if_needed()
 
+if(NOT QNX)
+message(STATUS "NOT QNX")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
+endif()
 set(CMAKE_CXX_EXTENSIONS NO)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS YES)
@@ -115,7 +118,9 @@ endif()
 # Prefer -pthread over -lpthread, which is often the better option of the two.
 set(CMAKE_THREAD_PREFER_PTHREAD YES)
 # Make sure we have Threads available.
+if(NOT QNX)
 find_package(Threads REQUIRED)
+endif()
 
 find_package(ZLIB)
 find_package(LibLZMA)
@@ -143,11 +148,17 @@ if(NOT OPTION_DEDICATED)
         if(NOT APPLE)
             find_package(Freetype)
             find_package(SDL2)
+            if(NOT QNX)
             find_package(Fluidsynth)
+            endif()
+            if(NOT QNX)
             if(Freetype_FOUND)
                 find_package(Fontconfig)
             endif()
+            endif()
+            if(NOT QNX)
             find_package(Harfbuzz)
+            endif()
             find_package(ICU OPTIONAL_COMPONENTS i18n uc)
         endif()
     endif()
@@ -166,6 +177,10 @@ endif()
 
 if(NOT EMSCRIPTEN AND NOT OPTION_DEDICATED)
     find_package(OpenGL COMPONENTS OpenGL)
+endif()
+
+if(QNX)
+    set(OPENGLES2_FOUND true)
 endif()
 
 if(MSVC)
@@ -269,12 +284,20 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/media)
 add_dependencies(openttd
     find_version)
 
+if(NOT QNX)
 target_link_libraries(openttd_lib
     openttd::languages
     openttd::settings
     openttd::script_api
     Threads::Threads
 )
+else()
+target_link_libraries(openttd_lib
+    openttd::languages
+    openttd::settings
+    openttd::script_api
+)
+endif()
 
 target_link_libraries(openttd
     openttd_lib
@@ -302,7 +325,9 @@ endif()
 set_target_properties(openttd PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 include(LinkPackage)
+if(NOT QNX)
 link_package(PNG TARGET PNG::PNG ENCOURAGED)
+endif()
 link_package(ZLIB TARGET ZLIB::ZLIB ENCOURAGED)
 link_package(LIBLZMA TARGET LibLZMA::LibLZMA ENCOURAGED)
 link_package(LZO)
@@ -338,7 +363,7 @@ if(NOT OPTION_DEDICATED)
     endif()
 endif()
 
-include(3rdparty/llvm/CheckAtomic)
+# include(3rdparty/llvm/CheckAtomic)
 
 if(APPLE)
     link_package(Iconv TARGET Iconv::Iconv)
