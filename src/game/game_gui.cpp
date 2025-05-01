@@ -18,6 +18,7 @@
 #include "../dropdown_func.h"
 #include "../timer/timer.h"
 #include "../timer/timer_window.h"
+#include "../core/string_consumer.hpp"
 
 #include "game.hpp"
 #include "game_gui.hpp"
@@ -195,7 +196,7 @@ struct GSConfigWindow : public Window {
 					bool editable = this->IsEditableItem(config_item);
 
 					if (config_item.flags.Test(ScriptConfigFlag::Boolean)) {
-						DrawBoolButton(br.left, y + button_y_offset, current_value != 0, editable);
+						DrawBoolButton(br.left, y + button_y_offset, COLOUR_YELLOW, COLOUR_MAUVE, current_value != 0, editable);
 					} else {
 						int i = static_cast<int>(std::distance(std::begin(this->visible_settings), it));
 						if (config_item.complete_labels) {
@@ -346,9 +347,10 @@ struct GSConfigWindow : public Window {
 
 	void OnQueryTextFinished(std::optional<std::string> str) override
 	{
-		if (!str.has_value() || str->empty()) return;
-		int32_t value = atoi(str->c_str());
-		SetValue(value);
+		if (!str.has_value()) return;
+		auto value = ParseInteger<int32_t>(*str);
+		if (!value.has_value()) return;
+		SetValue(*value);
 	}
 
 	void OnDropdownSelect(WidgetID widget, int index) override

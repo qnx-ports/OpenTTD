@@ -75,7 +75,7 @@ protected:
 	class ActiveInstance {
 	friend class ScriptObject;
 	public:
-		ActiveInstance(ScriptInstance *instance);
+		ActiveInstance(ScriptInstance &instance);
 		~ActiveInstance();
 	private:
 		ScriptInstance *last_active;    ///< The active instance before we go instantiated.
@@ -117,7 +117,7 @@ public:
 	 * Get the currently active instance.
 	 * @return The instance.
 	 */
-	static class ScriptInstance *GetActiveInstance();
+	static class ScriptInstance &GetActiveInstance();
 
 	/**
 	 * Get a reference of the randomizer that brings this script random values.
@@ -327,12 +327,12 @@ protected:
 	static bool CanSuspend();
 
 	/**
-	 * Get the pointer to store event data in.
+	 * Get the reference to the event queue.
 	 */
-	static void *&GetEventPointer();
+	static struct ScriptEventQueue &GetEventQueue();
 
 	/**
-	 * Get the pointer to store log message in.
+	 * Get the reference to the log message storage.
 	 */
 	static ScriptLogTypes::LogData &GetLogData();
 
@@ -465,6 +465,14 @@ public:
 	~ScriptObjectRef()
 	{
 		if (this->data != nullptr) this->data->Release();
+	}
+
+	/**
+	 * Transfer ownership to the caller.
+	 */
+	[[nodiscard]] T *release()
+	{
+		return std::exchange(this->data, nullptr);
 	}
 
 	/**

@@ -73,6 +73,8 @@
 #include <variant>
 #include <vector>
 
+using namespace std::literals::string_view_literals;
+
 #if defined(UNIX) || defined(__MINGW32__)
 #	include <sys/types.h>
 #endif
@@ -87,7 +89,7 @@
 #endif
 
 #if defined(_MSC_VER)
-	// See https://learn.microsoft.com/en-us/cpp/cpp/empty-bases?view=msvc-170
+	/* See https://learn.microsoft.com/en-us/cpp/cpp/empty-bases?view=msvc-170 */
 #	define EMPTY_BASES __declspec(empty_bases)
 #else
 #	define EMPTY_BASES
@@ -157,14 +159,14 @@
 #	if defined(_WIN32)
 		char *getcwd(char *buf, size_t size);
 
-		std::string FS2OTTD(const std::wstring &name);
-		std::wstring OTTD2FS(const std::string &name);
+		std::string FS2OTTD(std::wstring_view name);
+		std::wstring OTTD2FS(std::string_view name);
 #	elif defined(WITH_ICONV)
-		std::string FS2OTTD(const std::string &name);
-		std::string OTTD2FS(const std::string &name);
+		std::string FS2OTTD(std::string_view name);
+		std::string OTTD2FS(std::string_view name);
 #	else
-		template <typename T> std::string FS2OTTD(T name) { return name; }
-		template <typename T> std::string OTTD2FS(T name) { return name; }
+		static inline std::string FS2OTTD(std::string_view name) { return std::string{name}; }
+		static inline std::string OTTD2FS(std::string_view name) { return std::string{name}; }
 #	endif /* _WIN32 or WITH_ICONV */
 #endif /* STRGEN || SETTINGSGEN */
 

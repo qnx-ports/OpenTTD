@@ -389,7 +389,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :ออก
 
 # Settings menu
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :ตัวเลือกเกม
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :การตั้งค่า
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :กำหนดค่า NewGRF
 STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :แถบเมนูตั้งค่าวัตถุโปร่งใส
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :แสดงชื่อเมือง
@@ -860,6 +859,7 @@ STR_GAME_OPTIONS_CAPTION                                        :{WHITE}ตั�
 
 
 
+
 STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}หน่วยสกุลเงิน
 STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}การเลือกสกุลเงิน
 
@@ -918,6 +918,7 @@ STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}ทำ�
 STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}ความละเอียดของหน้าจอ
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}เลือกความละเอียดของหน้าจอที่จะใช้
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :อื่นๆ
+
 
 
 
@@ -1044,8 +1045,7 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :อนุญา
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}ไม่มี AI ที่เหมาะสมปรากฎ...{}คุณสามารถดาวน์โหลด AI จากระบบ 'Online Content'
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}การตั้งค่าในเกม
+# Settings tree in the Game Options window
 STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}เติม string:
 STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}ขยายทั้งหมด
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}ยุบลงทั้งหมด
@@ -1886,7 +1886,6 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}เล�
 
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}ตัวเลือกเกม
 STR_INTRO_HIGHSCORE                                             :{BLACK}ตารางคะแนนสูงสุด
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}ตั้งค่า
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}การตั้งค่า NewGRF
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}ตรวจสอบเนื้อหาออนไลน์
 STR_INTRO_QUIT                                                  :{BLACK}ออก
@@ -1905,7 +1904,6 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}เล�
 
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}แสดงตัวเลือกเกม
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}แสดงตารางคะแนนสูงสุด
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}การตั้งค่า หน้าจอ
 STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}แสดงการกำหนดค่า NewGRF
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}ตรวจสอบเนื้อหาใหม่และการปรับปรุงสำหรับดาวโหลด
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}ออกจากเกม OpenTTD

@@ -19,6 +19,7 @@
 #include "textbuf_gui.h"
 #include "vehicle_gui.h"
 #include "zoom_func.h"
+#include "core/string_consumer.hpp"
 
 #include "engine_base.h"
 #include "industry.h"
@@ -412,7 +413,7 @@ struct NewGRFInspectWindow : Window {
 
 		GrfSpecFeature f = GetFeatureNum(this->window_number);
 		int h = GetVehicleImageCellSize((VehicleType)(VEH_TRAIN + (f - GSF_TRAINS)), EIT_IN_DEPOT).height;
-		int y = CenterBounds(br.top, br.bottom, h);
+		int y = CentreBounds(br.top, br.bottom, h);
 		DrawVehicleImage(v->First(), br, VehicleID::Invalid(), EIT_IN_DETAILS, skip);
 
 		/* Highlight the articulated part (this is different to the whole-vehicle highlighting of DrawVehicleImage */
@@ -608,9 +609,11 @@ struct NewGRFInspectWindow : Window {
 
 	void OnQueryTextFinished(std::optional<std::string> str) override
 	{
-		if (!str.has_value() || str->empty()) return;
+		if (!str.has_value()) return;
 
-		NewGRFInspectWindow::var60params[GetFeatureNum(this->window_number)][this->current_edit_param - 0x60] = std::strtol(str->c_str(), nullptr, 16);
+		auto val = ParseInteger<int32_t>(*str);
+		if (!val.has_value()) return;
+		NewGRFInspectWindow::var60params[GetFeatureNum(this->window_number)][this->current_edit_param - 0x60] = *val;
 		this->SetDirty();
 	}
 
@@ -1078,9 +1081,11 @@ struct SpriteAlignerWindow : Window {
 
 	void OnQueryTextFinished(std::optional<std::string> str) override
 	{
-		if (!str.has_value() || str->empty()) return;
+		if (!str.has_value()) return;
 
-		this->current_sprite = atoi(str->c_str());
+		auto value = ParseInteger(*str);
+		if (!value.has_value()) return;
+		this->current_sprite = *value;
 		if (this->current_sprite >= GetMaxSpriteID()) this->current_sprite = 0;
 		while (GetSpriteType(this->current_sprite) != SpriteType::Normal) {
 			this->current_sprite = (this->current_sprite + 1) % GetMaxSpriteID();

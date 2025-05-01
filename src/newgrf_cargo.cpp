@@ -55,10 +55,10 @@ CargoResolverObject::CargoResolverObject(const CargoSpec *cs, CallbackID callbac
 SpriteID GetCustomCargoSprite(const CargoSpec *cs)
 {
 	CargoResolverObject object(cs);
-	const SpriteGroup *group = object.Resolve();
-	if (group == nullptr) return 0;
+	const auto *group = object.Resolve<ResultSpriteGroup>();
+	if (group == nullptr || group->num_sprites == 0) return 0;
 
-	return group->GetResult();
+	return group->sprite;
 }
 
 

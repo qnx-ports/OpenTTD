@@ -336,7 +336,7 @@ static void DrawTile_Industry(TileInfo *ti)
 		 * DrawNewIndustry will return false if ever the resolver could not
 		 * find any sprite to display.  So in this case, we will jump on the
 		 * substitute gfx instead. */
-		if (indts->grf_prop.GetSpriteGroup() != nullptr && DrawNewIndustryTile(ti, ind, gfx, indts)) {
+		if (indts->grf_prop.HasSpriteGroups() && DrawNewIndustryTile(ti, ind, gfx, indts)) {
 			return;
 		} else {
 			/* No sprite group (or no valid one) found, meaning no graphics associated.
@@ -363,7 +363,7 @@ static void DrawTile_Industry(TileInfo *ti)
 	if (image == SPR_FLAT_WATER_TILE && IsTileOnWater(ti->tile)) {
 		DrawWaterClassGround(ti);
 	} else {
-		DrawGroundSprite(image, GroundSpritePaletteTransform(image, dits->ground.pal, GENERAL_SPRITE_COLOUR(ind->random_colour)));
+		DrawGroundSprite(image, GroundSpritePaletteTransform(image, dits->ground.pal, GetColourPalette(ind->random_colour)));
 	}
 
 	/* If industries are transparent and invisible, do not draw the upper part */
@@ -372,7 +372,7 @@ static void DrawTile_Industry(TileInfo *ti)
 	/* Add industry on top of the ground? */
 	image = dits->building.sprite;
 	if (image != 0) {
-		AddSortableSpriteToDraw(image, SpriteLayoutPaletteTransform(image, dits->building.pal, GENERAL_SPRITE_COLOUR(ind->random_colour)),
+		AddSortableSpriteToDraw(image, SpriteLayoutPaletteTransform(image, dits->building.pal, GetColourPalette(ind->random_colour)),
 			ti->x + dits->subtile_x,
 			ti->y + dits->subtile_y,
 			dits->width,
@@ -405,7 +405,7 @@ static Foundation GetFoundation_Industry(TileIndex tile, Slope tileh)
 	 */
 	if (gfx >= NEW_INDUSTRYTILEOFFSET) {
 		const IndustryTileSpec *indts = GetIndustryTileSpec(gfx);
-		if (indts->grf_prop.GetSpriteGroup() != nullptr && indts->callback_mask.Test(IndustryTileCallbackMask::DrawFoundations)) {
+		if (indts->callback_mask.Test(IndustryTileCallbackMask::DrawFoundations)) {
 			uint32_t callback_res = GetIndustryTileCallback(CBID_INDTILE_DRAW_FOUNDATIONS, 0, 0, gfx, Industry::GetByTile(tile), tile);
 			if (callback_res != CALLBACK_FAILED && !ConvertBooleanCallback(indts->grf_prop.grffile, CBID_INDTILE_DRAW_FOUNDATIONS, callback_res)) return FOUNDATION_NONE;
 		}
@@ -696,7 +696,7 @@ static void AnimateTile_Industry(TileIndex tile)
 {
 	IndustryGfx gfx = GetIndustryGfx(tile);
 
-	if (GetIndustryTileSpec(gfx)->animation.status != ANIM_STATUS_NO_ANIMATION) {
+	if (GetIndustryTileSpec(gfx)->animation.status != AnimationStatus::NoAnimation) {
 		AnimateNewIndustryTile(tile);
 		return;
 	}
@@ -763,7 +763,7 @@ static void MakeIndustryTileBigger(TileIndex tile)
 	uint8_t stage = GetIndustryConstructionStage(tile) + 1;
 	SetIndustryConstructionCounter(tile, 0);
 	SetIndustryConstructionStage(tile, stage);
-	StartStopIndustryTileAnimation(tile, IAT_CONSTRUCTION_STATE_CHANGE);
+	TriggerIndustryTileAnimation_ConstructionStageChanged(tile, false);
 	if (stage == INDUSTRY_COMPLETED) SetIndustryCompleted(tile);
 
 	MarkTileDirtyByTile(tile);
@@ -844,7 +844,7 @@ static void TileLoop_Industry(TileIndex tile)
 	 * returning from TileLoop_Water. */
 	if (!IsTileType(tile, MP_INDUSTRY)) return;
 
-	TriggerIndustryTile(tile, INDTILE_TRIGGER_TILE_LOOP);
+	TriggerIndustryTileRandomisation(tile, IndustryRandomTrigger::TileLoop);
 
 	if (!IsIndustryCompleted(tile)) {
 		MakeIndustryTileBigger(tile);
@@ -853,7 +853,7 @@ static void TileLoop_Industry(TileIndex tile)
 
 	if (_game_mode == GM_EDITOR) return;
 
-	if (TransportIndustryGoods(tile) && !StartStopIndustryTileAnimation(Industry::GetByTile(tile), IAT_INDUSTRY_DISTRIBUTES_CARGO)) {
+	if (TransportIndustryGoods(tile) && !TriggerIndustryAnimation(Industry::GetByTile(tile), IndustryAnimationTrigger::CargoDistributed)) {
 		uint newgfx = GetIndustryTileSpec(GetIndustryGfx(tile))->anim_production;
 
 		if (newgfx != INDUSTRYTILE_NOANIM) {
@@ -865,7 +865,7 @@ static void TileLoop_Industry(TileIndex tile)
 		}
 	}
 
-	if (StartStopIndustryTileAnimation(tile, IAT_TILELOOP)) return;
+	if (TriggerIndustryTileAnimation(tile, IndustryAnimationTrigger::TileLoop)) return;
 
 	IndustryGfx newgfx = GetIndustryTileSpec(GetIndustryGfx(tile))->anim_next;
 	if (newgfx != INDUSTRYTILE_NOANIM) {
@@ -1104,30 +1104,6 @@ void PlantRandomFarmField(const Industry *i)
 }
 
 /**
- * Search callback function for ChopLumberMillTrees
- * @param tile to test
- * @return the result of the test
- */
-static bool SearchLumberMillTrees(TileIndex tile, void *)
-{
-	if (IsTileType(tile, MP_TREES) && GetTreeGrowth(tile) >= TreeGrowthStage::Grown) {
-		/* found a tree */
-
-		Backup<CompanyID> cur_company(_current_company, OWNER_NONE);
-
-		_industry_sound_ctr = 1;
-		_industry_sound_tile = tile;
-		if (_settings_client.sound.ambient) SndPlayTileFx(SND_38_LUMBER_MILL_1, tile);
-
-		Command<CMD_LANDSCAPE_CLEAR>::Do(DoCommandFlag::Execute, tile);
-
-		cur_company.Restore();
-		return true;
-	}
-	return false;
-}
-
-/**
  * Perform a circular search around the Lumber Mill in order to find trees to cut
  * @param i industry
  */
@@ -1144,9 +1120,20 @@ static void ChopLumberMillTrees(Industry *i)
 		}
 	}
 
-	TileIndex tile = i->location.tile;
-	if (CircularTileSearch(&tile, 40, SearchLumberMillTrees, nullptr)) { // 40x40 tiles  to search.
-		itp->waiting = ClampTo<uint16_t>(itp->waiting + ScaleByCargoScale(45, false)); // Found a tree, add according value to waiting cargo.
+	for (auto tile : SpiralTileSequence(i->location.tile, 40)) { // 40x40 tiles  to search.
+		if (!IsTileType(tile, MP_TREES) || GetTreeGrowth(tile) < TreeGrowthStage::Grown) continue;
+
+		/* found a tree */
+		_industry_sound_ctr = 1;
+		_industry_sound_tile = tile;
+		if (_settings_client.sound.ambient) SndPlayTileFx(SND_38_LUMBER_MILL_1, tile);
+
+		AutoRestoreBackup<CompanyID> cur_company(_current_company, OWNER_NONE);
+		Command<CMD_LANDSCAPE_CLEAR>::Do(DoCommandFlag::Execute, tile);
+
+		/* Add according value to waiting cargo. */
+		itp->waiting = ClampTo<uint16_t>(itp->waiting + ScaleByCargoScale(45, false));
+		break;
 	}
 }
 
@@ -1235,8 +1222,8 @@ static void ProduceIndustryGoods(Industry *i)
 			if (cut) ChopLumberMillTrees(i);
 		}
 
-		TriggerIndustry(i, INDUSTRY_TRIGGER_INDUSTRY_TICK);
-		StartStopIndustryTileAnimation(i, IAT_INDUSTRY_TICK);
+		TriggerIndustryRandomisation(i, IndustryRandomTrigger::IndustryTick);
+		TriggerIndustryAnimation(i, IndustryAnimationTrigger::IndustryTick);
 	}
 }
 
@@ -1321,7 +1308,7 @@ static CommandCost CheckNewIndustry_OilRefinery(TileIndex tile)
 	return CommandCost(STR_ERROR_CAN_ONLY_BE_POSITIONED);
 }
 
-extern bool _ignore_restrictions;
+extern bool _ignore_industry_restrictions;
 
 /**
  * Check the conditions of #CHECK_OIL_RIG (Industries at sea should be positioned near edge of the map).
@@ -1330,7 +1317,7 @@ extern bool _ignore_restrictions;
  */
 static CommandCost CheckNewIndustry_OilRig(TileIndex tile)
 {
-	if (_game_mode == GM_EDITOR && _ignore_restrictions) return CommandCost();
+	if (_game_mode == GM_EDITOR && _ignore_industry_restrictions) return CommandCost();
 
 	if (TileHeight(tile) == 0 &&
 			CheckScaledDistanceFromEdge(TileAddXY(tile, 1, 1), _settings_game.game_creation.oil_refinery_limit)) return CommandCost();
@@ -1566,7 +1553,7 @@ static CommandCost CheckIfIndustryTileSlopes(TileIndex tile, const IndustryTileL
 	/* It is almost impossible to have a fully flat land in TG, so what we
 	 *  do is that we check if we can make the land flat later on. See
 	 *  CheckIfCanLevelIndustryPlatform(). */
-	if (!refused_slope || (_settings_game.game_creation.land_generator == LG_TERRAGENESIS && _generating_world && !custom_shape && !_ignore_restrictions)) {
+	if (!refused_slope || (_settings_game.game_creation.land_generator == LG_TERRAGENESIS && _generating_world && !custom_shape && !_ignore_industry_restrictions)) {
 		return CommandCost();
 	}
 	return CommandCost(STR_ERROR_SITE_UNSUITABLE);
@@ -1955,7 +1942,16 @@ static void DoCreateNewIndustry(Industry *i, TileIndex tile, IndustryType type, 
 			/* it->gfx is stored in the map. But the translated ID cur_gfx is the interesting one */
 			IndustryGfx cur_gfx = GetTranslatedIndustryTileID(it.gfx);
 			const IndustryTileSpec *its = GetIndustryTileSpec(cur_gfx);
-			if (its->animation.status != ANIM_STATUS_NO_ANIMATION) AddAnimatedTile(cur_tile);
+			if (its->animation.status != AnimationStatus::NoAnimation) AddAnimatedTile(cur_tile);
+		}
+	}
+
+	/* Call callbacks after all tiles have been created. */
+	for (TileIndex cur_tile : i->location) {
+		if (i->TileBelongsToIndustry(cur_tile)) {
+			/* There are no shared random bits, consistent with "MakeIndustryTileBigger" in tile loop.
+			 * So, trigger tiles individually */
+			TriggerIndustryTileAnimation_ConstructionStageChanged(cur_tile, true);
 		}
 	}
 
@@ -2023,7 +2019,7 @@ static CommandCost CreateNewIndustryHelper(TileIndex tile, IndustryType type, Do
 	if (ret.Failed()) return ret;
 
 	if (!custom_shape_check && _settings_game.game_creation.land_generator == LG_TERRAGENESIS && _generating_world &&
-			!_ignore_restrictions && !CheckIfCanLevelIndustryPlatform(tile, DoCommandFlag::NoWater, layout)) {
+			!_ignore_industry_restrictions && !CheckIfCanLevelIndustryPlatform(tile, DoCommandFlag::NoWater, layout)) {
 		return CommandCost(STR_ERROR_SITE_UNSUITABLE);
 	}
 

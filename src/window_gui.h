@@ -67,7 +67,6 @@ public:
 
 	static constexpr float ASPECT_LOCATION = 12.f / 14.f;
 	static constexpr float ASPECT_RENAME = 12.f / 14.f;
-	static constexpr float ASPECT_SETTINGS_BUTTON = 21.f / 12.f;
 	static constexpr float ASPECT_TOGGLE_SIZE = 12.f / 14.f;
 	static constexpr float ASPECT_LEFT_RIGHT_BUTTON = 8.f / 12.f;
 	static constexpr float ASPECT_UP_DOWN_BUTTON = 11.f / 12.f;
@@ -278,7 +277,7 @@ private:
 protected:
 	void InitializeData(WindowNumber window_number);
 	void InitializePositionSize(int x, int y, int min_width, int min_height);
-	virtual void FindWindowPlacementAndResize(int def_width, int def_height);
+	virtual void FindWindowPlacementAndResize(int def_width, int def_height, bool allow_resize);
 
 	std::vector<int> scheduled_invalidation_data{}; ///< Data of scheduled OnInvalidateData() calls.
 	bool scheduled_resize = false; ///< Set if window has been resized.
@@ -343,7 +342,7 @@ public:
 
 	virtual const struct Textbuf *GetFocusedTextbuf() const;
 	virtual Point GetCaretPosition() const;
-	virtual Rect GetTextBoundingRect(const char *from, const char *to) const;
+	virtual Rect GetTextBoundingRect(size_t from, size_t to) const;
 	virtual ptrdiff_t GetTextCharacterAtPosition(const Point &pt) const;
 
 	void InitNested(WindowNumber number = 0);
@@ -498,7 +497,7 @@ public:
 	bool SetFocusedWidget(WidgetID widget_index);
 
 	EventState HandleEditBoxKey(WidgetID wid, char32_t key, uint16_t keycode);
-	virtual void InsertTextString(WidgetID wid, const char *str, bool marked, const char *caret, const char *insert_location, const char *replacement_end);
+	virtual void InsertTextString(WidgetID wid, std::string_view str, bool marked, std::optional<size_t> caret, std::optional<size_t> insert_location, std::optional<size_t> replacement_end);
 
 	void HandleButtonClick(WidgetID widget);
 	int GetRowFromWidget(int clickpos, WidgetID widget, int padding, int line_height = -1) const;

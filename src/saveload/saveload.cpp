@@ -30,6 +30,7 @@
 #include "../strings_func.h"
 #include "../core/endian_func.hpp"
 #include "../core/string_builder.hpp"
+#include "../core/string_consumer.hpp"
 #include "../vehicle_base.h"
 #include "../company_func.h"
 #include "../timer/timer_game_economy.h"
@@ -935,13 +936,14 @@ void FixSCCEncoded(std::string &str, bool fix_code)
 	bool in_string = false; // Set if we in a string, between double-quotes.
 	bool need_type = true; // Set if a parameter type needs to be emitted.
 
-	for (auto it = std::begin(str); it != std::end(str); /* nothing */) {
-		size_t len = Utf8EncodedCharLen(*it);
-		if (len == 0 || it + len > std::end(str)) break;
-
+	StringConsumer consumer(str);
+	while (consumer.AnyBytesLeft()) {
 		char32_t c;
-		Utf8Decode(&c, &*it);
-		it += len;
+		if (auto r = consumer.TryReadUtf8(); r.has_value()) {
+			c = *r;
+		} else {
+			break;
+		}
 		if (c == SCC_ENCODED || (fix_code && (c == 0xE028 || c == 0xE02A))) {
 			builder.PutUtf8(SCC_ENCODED);
 			need_type = false;
@@ -980,6 +982,43 @@ void FixSCCEncoded(std::string &str, bool fix_code)
 }
 
 /**
+ * Scan the string for SCC_ENCODED_NUMERIC with negative values, and reencode them as uint64_t.
+ * @param str the string to fix.
+ */
+void FixSCCEncodedNegative(std::string &str)
+{
+	if (str.empty()) return;
+
+	StringConsumer consumer(str);
+
+	/* Check whether this is an encoded string */
+	if (!consumer.ReadUtf8If(SCC_ENCODED)) return;
+
+	std::string result;
+	StringBuilder builder(result);
+	builder.PutUtf8(SCC_ENCODED);
+	while (consumer.AnyBytesLeft()) {
+		/* Copy until next record */
+		builder.Put(consumer.ReadUntilUtf8(SCC_RECORD_SEPARATOR, StringConsumer::READ_ONE_SEPARATOR));
+
+		/* Check whether this is a numeric parameter */
+		if (!consumer.ReadUtf8If(SCC_ENCODED_NUMERIC)) continue;
+		builder.PutUtf8(SCC_ENCODED_NUMERIC);
+
+		/* First try unsigned */
+		if (auto u = consumer.TryReadIntegerBase<uint64_t>(16); u.has_value()) {
+			builder.PutIntegerBase<uint64_t>(*u, 16);
+		} else {
+			/* Read as signed, store as unsigned */
+			auto s = consumer.ReadIntegerBase<int64_t>(16);
+			builder.PutIntegerBase<uint64_t>(static_cast<uint64_t>(s), 16);
+		}
+	}
+
+	str = std::move(result);
+}
+
+/**
  * Read the given amount of bytes from the buffer into the string.
  * @param str The string to write to.
  * @param length The amount of bytes to read into the string.
@@ -1004,7 +1043,7 @@ static void SlStdString(void *ptr, VarType conv)
 		case SLA_SAVE: {
 			size_t len = str->length();
 			SlWriteArrayLength(len);
-			SlCopyBytes(const_cast<void *>(static_cast<const void *>(str->c_str())), len);
+			SlCopyBytes(const_cast<void *>(static_cast<const void *>(str->data())), len);
 			break;
 		}
 
@@ -1022,9 +1061,13 @@ static void SlStdString(void *ptr, VarType conv)
 			if ((conv & SLF_ALLOW_CONTROL) != 0) {
 				settings.Set(StringValidationSetting::AllowControlCode);
 				if (IsSavegameVersionBefore(SLV_ENCODED_STRING_FORMAT)) FixSCCEncoded(*str, IsSavegameVersionBefore(SLV_169));
+				if (IsSavegameVersionBefore(SLV_FIX_SCC_ENCODED_NEGATIVE)) FixSCCEncodedNegative(*str);
 			}
 			if ((conv & SLF_ALLOW_NEWLINE) != 0) {
 				settings.Set(StringValidationSetting::AllowNewline);
+			}
+			if ((conv & SLF_REPLACE_TABCRLF) != 0) {
+				settings.Set(StringValidationSetting::ReplaceTabCrNlWithSpace);
 			}
 			StrMakeValidInPlace(*str, settings);
 		}
@@ -2751,7 +2794,7 @@ struct LZMASaveFilter : SaveFilter {
 
 /** The format for a reader/writer type of a savegame */
 struct SaveLoadFormat {
-	const char *name;                     ///< name of the compressor/decompressor (debug-only)
+	std::string_view name; ///< name of the compressor/decompressor (debug-only)
 	uint32_t tag;                           ///< the 4-letter tag by which it is identified in the savegame
 
 	std::shared_ptr<LoadFilter> (*init_load)(std::shared_ptr<LoadFilter> chain); ///< Constructor for the load filter.
@@ -2849,7 +2892,7 @@ static std::pair<const SaveLoadFormat &, uint8_t> GetSavegameFormat(const std::s
 /* actual loader/saver function */
 void InitializeGame(uint size_x, uint size_y, bool reset_date, bool reset_settings);
 extern bool AfterLoadGame();
-extern bool LoadOldSaveGame(const std::string &file);
+extern bool LoadOldSaveGame(std::string_view file);
 
 /**
  * Reset all settings to their default, so any settings missing in the savegame
@@ -3210,7 +3253,7 @@ SaveOrLoadResult LoadWithFilter(std::shared_ptr<LoadFilter> reader)
  * @param threaded True when threaded saving is allowed
  * @return Return the result of the action. #SL_OK, #SL_ERROR, or #SL_REINIT ("unload" the game)
  */
-SaveOrLoadResult SaveOrLoad(const std::string &filename, SaveLoadOperation fop, DetailedFileType dft, Subdirectory sb, bool threaded)
+SaveOrLoadResult SaveOrLoad(std::string_view filename, SaveLoadOperation fop, DetailedFileType dft, Subdirectory sb, bool threaded)
 {
 	/* An instance of saving is already active, so don't go saving again */
 	if (_sl.saveinprogress && fop == SLO_SAVE && dft == DFT_GAME_FILE && threaded) {
@@ -3369,32 +3412,20 @@ std::string GenerateDefaultSaveName()
 }
 
 /**
- * Set the mode and file type of the file to save or load based on the type of file entry at the file system.
- * @param ft Type of file entry of the file system.
- */
-void FileToSaveLoad::SetMode(FiosType ft)
-{
-	this->SetMode(SLO_LOAD, GetAbstractFileType(ft), GetDetailedFileType(ft));
-}
-
-/**
  * Set the mode and file type of the file to save or load.
+ * @param ft File type.
  * @param fop File operation being performed.
- * @param aft Abstract file type.
- * @param dft Detailed file type.
  */
-void FileToSaveLoad::SetMode(SaveLoadOperation fop, AbstractFileType aft, DetailedFileType dft)
+void FileToSaveLoad::SetMode(const FiosType &ft, SaveLoadOperation fop)
 {
-	if (aft == FT_INVALID || aft == FT_NONE) {
+	if (ft.abstract == FT_INVALID || ft.abstract == FT_NONE) {
 		this->file_op = SLO_INVALID;
-		this->detail_ftype = DFT_INVALID;
-		this->abstract_ftype = FT_INVALID;
+		this->ftype = FIOS_TYPE_INVALID;
 		return;
 	}
 
 	this->file_op = fop;
-	this->detail_ftype = dft;
-	this->abstract_ftype = aft;
+	this->ftype = ft;
 }
 
 /**

@@ -20,7 +20,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-extern FT_Library _library;
+extern FT_Library _ft_library;
 
 /**
  * Split the font name into the font family and style. These fields are separated by a comma,
@@ -39,7 +39,7 @@ static std::tuple<std::string, std::string> SplitFontFamilyAndStyle(std::string_
 	return { std::string(font_name.substr(0, separator)), std::string(font_name.substr(begin)) };
 }
 
-FT_Error GetFontByFaceName(const char *font_name, FT_Face *face)
+FT_Error GetFontByFaceName(std::string_view font_name, FT_Face *face)
 {
 	FT_Error err = FT_Err_Cannot_Open_Resource;
 
@@ -85,7 +85,7 @@ FT_Error GetFontByFaceName(const char *font_name, FT_Face *face)
 				 * wrongly a 'random' font, so check whether the family name is the
 				 * same as the supplied name */
 				if (StrEqualsIgnoreCase(font_family, (char *)family)) {
-					err = FT_New_Face(_library, (char *)file, index, face);
+					err = FT_New_Face(_ft_library, (char *)file, index, face);
 				}
 			}
 		}

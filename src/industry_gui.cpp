@@ -21,6 +21,7 @@
 #include "town.h"
 #include "cheat_type.h"
 #include "newgrf_badge.h"
+#include "newgrf_badge_gui.h"
 #include "newgrf_industries.h"
 #include "newgrf_text.h"
 #include "newgrf_debug.h"
@@ -47,6 +48,7 @@
 #include "timer/timer.h"
 #include "timer/timer_window.h"
 #include "hotkeys.h"
+#include "core/string_consumer.hpp"
 
 #include "widgets/industry_widget.h"
 
@@ -56,7 +58,7 @@
 
 #include "safeguards.h"
 
-bool _ignore_restrictions;
+bool _ignore_industry_restrictions;
 std::bitset<NUM_INDUSTRYTYPES> _displayed_industries; ///< Communication from the industry chain window to the smallmap window about what industries to display.
 
 /** Cargo suffix type (for which window is it requested) */
@@ -174,12 +176,12 @@ static inline void GetAllCargoSuffixes(CargoSuffixInOut use_input, CargoSuffixTy
 		}
 		switch (use_input) {
 			case CARGOSUFFIX_OUT:
-				// Handle INDUSTRY_ORIGINAL_NUM_OUTPUTS cargoes
+				/* Handle INDUSTRY_ORIGINAL_NUM_OUTPUTS cargoes */
 				if (IsValidCargoType(cargoes[0])) GetCargoSuffix(3, cst, ind, ind_type, indspec, suffixes[0]);
 				if (IsValidCargoType(cargoes[1])) GetCargoSuffix(4, cst, ind, ind_type, indspec, suffixes[1]);
 				break;
 			case CARGOSUFFIX_IN:
-				// Handle INDUSTRY_ORIGINAL_NUM_INPUTS cargoes
+				/* Handle INDUSTRY_ORIGINAL_NUM_INPUTS cargoes */
 				if (IsValidCargoType(cargoes[0])) GetCargoSuffix(0, cst, ind, ind_type, indspec, suffixes[0]);
 				if (IsValidCargoType(cargoes[1])) GetCargoSuffix(1, cst, ind, ind_type, indspec, suffixes[1]);
 				if (IsValidCargoType(cargoes[2])) GetCargoSuffix(2, cst, ind, ind_type, indspec, suffixes[2]);
@@ -389,7 +391,7 @@ class BuildIndustryWindow : public Window {
 		if (numcargo > 0) {
 			cargostring = GetString(prefixstr, CargoSpec::Get(cargolist[firstcargo])->name, cargo_suffix[firstcargo].text) + cargostring;
 		} else {
-			cargostring = GetString(prefixstr, STR_JUST_NOTHING, "");
+			cargostring = GetString(prefixstr, STR_JUST_NOTHING, ""sv);
 		}
 
 		return cargostring;
@@ -722,15 +724,11 @@ public:
 				return;
 			}
 
-			Backup<CompanyID> cur_company(_current_company, OWNER_NONE);
-			Backup<bool> old_generating_world(_generating_world, true);
-			_ignore_restrictions = true;
+			AutoRestoreBackup backup_cur_company(_current_company, OWNER_NONE);
+			AutoRestoreBackup backup_generating_world(_generating_world, true);
+			AutoRestoreBackup backup_ignore_industry_restritions(_ignore_industry_restrictions, true);
 
 			Command<CMD_BUILD_INDUSTRY>::Post(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY, &CcBuildIndustry, tile, this->selected_type, layout_index, false, seed);
-
-			cur_company.Restore();
-			old_generating_world.Restore();
-			_ignore_restrictions = false;
 		} else {
 			success = Command<CMD_BUILD_INDUSTRY>::Post(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY, tile, this->selected_type, layout_index, false, seed);
 		}
@@ -868,7 +866,7 @@ public:
 		SpriteID icon = CargoSpec::Get(cargo_type)->GetCargoIcon();
 		Dimension d = GetSpriteSize(icon);
 		Rect ir = r.WithWidth(this->cargo_icon_size.width, rtl).WithHeight(GetCharacterHeight(FS_NORMAL));
-		DrawSprite(icon, PAL_NONE, CenterBounds(ir.left, ir.right, d.width), CenterBounds(ir.top, ir.bottom, this->cargo_icon_size.height));
+		DrawSprite(icon, PAL_NONE, CentreBounds(ir.left, ir.right, d.width), CentreBounds(ir.top, ir.bottom, this->cargo_icon_size.height));
 	}
 
 	std::string GetAcceptedCargoString(const Industry::AcceptedCargo &ac, const CargoSuffix &suffix) const
@@ -1145,16 +1143,17 @@ public:
 		if (!str.has_value() || str->empty()) return;
 
 		Industry *i = Industry::Get(this->window_number);
-		uint value = atoi(str->c_str());
+		auto value = ParseInteger(*str);
+		if (!value.has_value()) return;
 		switch (this->editbox_line) {
 			case IL_NONE: NOT_REACHED();
 
 			case IL_MULTIPLIER:
-				i->prod_level = ClampU(RoundDivSU(value * PRODLEVEL_DEFAULT, 100), PRODLEVEL_MINIMUM, PRODLEVEL_MAXIMUM);
+				i->prod_level = ClampU(RoundDivSU(*value * PRODLEVEL_DEFAULT, 100), PRODLEVEL_MINIMUM, PRODLEVEL_MAXIMUM);
 				break;
 
 			default:
-				i->produced[this->editbox_line - IL_RATE1].rate = ClampU(RoundDivSU(value, 8), 0, 255);
+				i->produced[this->editbox_line - IL_RATE1].rate = ClampU(RoundDivSU(*value, 8), 0, 255);
 				break;
 		}
 		UpdateIndustryProduction(i);
@@ -2707,19 +2706,13 @@ struct IndustryCargoesWindow : public Window {
 	 */
 	static bool HousesCanAccept(const std::span<const CargoType> cargoes)
 	{
-		HouseZones climate_mask;
-		switch (_settings_game.game_creation.landscape) {
-			case LandscapeType::Temperate: climate_mask = HZ_TEMP; break;
-			case LandscapeType::Arctic:    climate_mask = HZ_SUBARTC_ABOVE | HZ_SUBARTC_BELOW; break;
-			case LandscapeType::Tropic:    climate_mask = HZ_SUBTROPIC; break;
-			case LandscapeType::Toyland:   climate_mask = HZ_TOYLND; break;
-			default: NOT_REACHED();
-		}
+		HouseZones climate_mask = GetClimateMaskForLandscape();
+
 		for (const CargoType cargo_type : cargoes) {
 			if (!IsValidCargoType(cargo_type)) continue;
 
 			for (const auto &hs : HouseSpec::Specs()) {
-				if (!hs.enabled || !(hs.building_availability & climate_mask)) continue;
+				if (!hs.enabled || !hs.building_availability.Any(climate_mask)) continue;
 
 				for (uint j = 0; j < lengthof(hs.accepts_cargo); j++) {
 					if (hs.cargo_acceptance[j] > 0 && cargo_type == hs.accepts_cargo[j]) return true;

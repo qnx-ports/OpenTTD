@@ -820,6 +820,7 @@ STR_GAME_OPTIONS_CAPTION                                        :{WHITE}کھیل
 
 
 
+
 STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}کرنسی کی اکائیاں
 STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}کرنسی کی اکائی اختیار کریں
 
@@ -874,6 +875,7 @@ STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}مُکم
 STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}اسکرین کی resolution
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}اسکرین کی resolution اختیار کریں
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :دیگر
+
 
 
 
@@ -995,7 +997,7 @@ STR_CITY_APPROVAL_HOSTILE                                       :مخالفان�
 STR_CITY_APPROVAL_PERMISSIVE                                    :اجازت دینے والا
 
 
-# Settings tree window
+# Settings tree in the Game Options window
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(کوئی وضاحت موجود نہیں)
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}ترتیب قسم: {ORANGE}{STRING}
 

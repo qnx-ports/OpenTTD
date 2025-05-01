@@ -145,7 +145,7 @@ void BaseNetworkContentDownloadStatusWindow::DrawWidget(const Rect &r, WidgetID 
 			DrawFrameRect(r, COLOUR_GREY, {FrameFlag::BorderOnly, FrameFlag::Lowered});
 			Rect ir = r.Shrink(WidgetDimensions::scaled.bevel);
 			DrawFrameRect(ir.WithWidth((uint64_t)ir.Width() * this->downloaded_bytes / this->total_bytes, _current_text_dir == TD_RTL), COLOUR_MAUVE, {});
-			DrawString(ir.left, ir.right, CenterBounds(ir.top, ir.bottom, GetCharacterHeight(FS_NORMAL)),
+			DrawString(ir.left, ir.right, CentreBounds(ir.top, ir.bottom, GetCharacterHeight(FS_NORMAL)),
 				GetString(STR_CONTENT_DOWNLOAD_PROGRESS_SIZE, this->downloaded_bytes, this->total_bytes, this->downloaded_bytes * 100LL / this->total_bytes),
 				TC_FROMSTRING, SA_HOR_CENTER);
 			break;
@@ -165,11 +165,11 @@ void BaseNetworkContentDownloadStatusWindow::DrawWidget(const Rect &r, WidgetID 
 	}
 }
 
-void BaseNetworkContentDownloadStatusWindow::OnDownloadProgress(const ContentInfo *ci, int bytes)
+void BaseNetworkContentDownloadStatusWindow::OnDownloadProgress(const ContentInfo &ci, int bytes)
 {
-	if (ci->id != this->cur_id) {
-		this->name = ci->filename;
-		this->cur_id = ci->id;
+	if (ci.id != this->cur_id) {
+		this->name = ci.filename;
+		this->cur_id = ci.id;
 		this->downloaded_files++;
 	}
 
@@ -298,10 +298,10 @@ public:
 		}
 	}
 
-	void OnDownloadProgress(const ContentInfo *ci, int bytes) override
+	void OnDownloadProgress(const ContentInfo &ci, int bytes) override
 	{
 		BaseNetworkContentDownloadStatusWindow::OnDownloadProgress(ci, bytes);
-		include(this->receivedTypes, ci->type);
+		include(this->receivedTypes, ci.type);
 
 		/* When downloading is finished change cancel in ok */
 		if (this->downloaded_bytes == this->total_bytes) {
@@ -364,21 +364,21 @@ class NetworkContentListWindow : public Window, ContentCallback {
 				if (!first) url.push_back(',');
 				first = false;
 
-				fmt::format_to(std::back_inserter(url), "{:08X}:{}", ci->unique_id, FormatArrayAsHex(ci->md5sum));
+				format_append(url, "{:08X}:{}", ci->unique_id, FormatArrayAsHex(ci->md5sum));
 			}
 		} else {
 			url += "do=searchtext&q=";
 
 			/* Escape search term */
-			for (const char *search = this->filter_editbox.text.GetText(); *search != '\0'; search++) {
+			for (char search : this->filter_editbox.text.GetText()) {
 				/* Remove quotes */
-				if (*search == '\'' || *search == '"') continue;
+				if (search == '\'' || search == '"') continue;
 
 				/* Escape special chars, such as &%,= */
-				if (*search < 0x30) {
-					fmt::format_to(std::back_inserter(url), "%{:02X}", *search);
+				if (static_cast<unsigned char>(search) < 0x30) {
+					format_append(url, "%{:02X}", search);
 				} else {
-					url.push_back(*search);
+					url.push_back(search);
 				}
 			}
 		}
@@ -410,9 +410,9 @@ class NetworkContentListWindow : public Window, ContentCallback {
 
 		bool all_available = true;
 
-		for (ConstContentIterator iter = _network_content_client.Begin(); iter != _network_content_client.End(); iter++) {
-			if ((*iter)->state == ContentInfo::DOES_NOT_EXIST) all_available = false;
-			this->content.push_back(*iter);
+		for (const ContentInfo &ci : _network_content_client.Info()) {
+			if (ci.state == ContentInfo::DOES_NOT_EXIST) all_available = false;
+			this->content.push_back(&ci);
 		}
 
 		this->SetWidgetDisabledState(WID_NCL_SEARCH_EXTERNAL, this->auto_select && all_available);
@@ -687,8 +687,8 @@ public:
 		Rect tr = r.Shrink(WidgetDimensions::scaled.frametext);
 		tr.top += HEADER_HEIGHT;
 
-		/* Create the nice grayish rectangle at the details top */
-		GfxFillRect(r.WithHeight(HEADER_HEIGHT).Shrink(WidgetDimensions::scaled.bevel.left, WidgetDimensions::scaled.bevel.top, WidgetDimensions::scaled.bevel.right, 0), PC_DARK_BLUE);
+		/* Create the nice darker rectangle at the details top */
+		GfxFillRect(r.WithHeight(HEADER_HEIGHT).Shrink(WidgetDimensions::scaled.bevel.left, WidgetDimensions::scaled.bevel.top, WidgetDimensions::scaled.bevel.right, 0), GetColourGradient(COLOUR_LIGHT_BLUE, SHADE_NORMAL));
 		DrawString(hr.left, hr.right, hr.top, STR_CONTENT_DETAIL_TITLE, TC_FROMSTRING, SA_HOR_CENTER);
 
 		/* Draw the total download size */
@@ -732,13 +732,11 @@ public:
 			std::string buf;
 			for (auto &cid : this->selected->dependencies) {
 				/* Try to find the dependency */
-				ConstContentIterator iter = _network_content_client.Begin();
-				for (; iter != _network_content_client.End(); iter++) {
-					const ContentInfo *ci = *iter;
-					if (ci->id != cid) continue;
+				for (const ContentInfo &ci : _network_content_client.Info()) {
+					if (ci.id != cid) continue;
 
 					if (!buf.empty()) buf += list_separator;
-					buf += (*iter)->name;
+					buf += ci.name;
 					break;
 				}
 			}
@@ -787,14 +785,14 @@ public:
 				auto it = this->vscroll->GetScrolledItemFromWidget(this->content, pt.y, this, WID_NCL_MATRIX);
 				if (it == this->content.end()) return; // click out of bounds
 
-				this->selected = *it;
-				this->list_pos = it - this->content.begin();
-
 				const NWidgetBase *checkbox = this->GetWidget<NWidgetBase>(WID_NCL_CHECKBOX);
 				if (click_count > 1 || IsInsideBS(pt.x, checkbox->pos_x, checkbox->current_x)) {
-					_network_content_client.ToggleSelectedState(this->selected);
+					_network_content_client.ToggleSelectedState(**it);
 					this->content.ForceResort();
 					this->content.ForceRebuild();
+				} else {
+					this->selected = *it;
+					this->list_pos = it - this->content.begin();
 				}
 
 				if (this->filter_data.types.any()) {
@@ -870,7 +868,7 @@ public:
 				case WKC_RETURN:
 					if (keycode == WKC_RETURN || !IsWidgetFocused(WID_NCL_FILTER)) {
 						if (this->selected != nullptr) {
-							_network_content_client.ToggleSelectedState(this->selected);
+							_network_content_client.ToggleSelectedState(*this->selected);
 							this->content.ForceResort();
 							this->InvalidateData();
 						}
@@ -925,9 +923,9 @@ public:
 		this->vscroll->SetCapacityFromWidget(this, WID_NCL_MATRIX);
 	}
 
-	void OnReceiveContentInfo(const ContentInfo *rci) override
+	void OnReceiveContentInfo(const ContentInfo &rci) override
 	{
-		if (this->auto_select && !rci->IsSelected()) _network_content_client.ToggleSelectedState(rci);
+		if (this->auto_select && !rci.IsSelected()) _network_content_client.ToggleSelectedState(rci);
 		this->content.ForceRebuild();
 		this->InvalidateData(0, false);
 	}
@@ -1138,9 +1136,5 @@ void ShowNetworkContentListWindow(ContentVector *cv, ContentType type1, ContentT
 		GetEncodedString(STR_CONTENT_NO_ZLIB),
 		GetEncodedString(STR_CONTENT_NO_ZLIB_SUB),
 		WL_ERROR);
-	/* Connection failed... clean up the mess */
-	if (cv != nullptr) {
-		for (ContentInfo *ci : *cv) delete ci;
-	}
 #endif /* WITH_ZLIB */
 }

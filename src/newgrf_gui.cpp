@@ -31,6 +31,7 @@
 #include "timer/timer.h"
 #include "timer/timer_window.h"
 #include "zoom_func.h"
+#include "core/string_consumer.hpp"
 
 #include "widgets/newgrf_widget.h"
 #include "widgets/misc_widget.h"
@@ -260,7 +261,7 @@ struct NewGRFParametersWindow : public Window {
 
 		auto it = std::ranges::lower_bound(par_info.value_names, value, std::less{}, &GRFParameterInfo::ValueName::first);
 		if (it != std::end(par_info.value_names) && it->first == value) {
-			if (auto label = GetGRFStringFromGRFText(it->second); label.has_value()) return {STR_JUST_RAW_STRING, std::string(*label)};
+			if (auto label = GetGRFStringFromGRFText(it->second); label.has_value()) return {STR_JUST_RAW_STRING, *label};
 		}
 
 		return {STR_JUST_INT, value};
@@ -301,7 +302,7 @@ struct NewGRFParametersWindow : public Window {
 			bool selected = (i == this->clicked_row);
 
 			if (par_info.type == PTYPE_BOOL) {
-				DrawBoolButton(buttons_left, ir.top + button_y_offset, current_value != 0, this->editable);
+				DrawBoolButton(buttons_left, ir.top + button_y_offset, COLOUR_YELLOW, COLOUR_MAUVE, current_value != 0, this->editable);
 			} else if (par_info.type == PTYPE_UINT_ENUM) {
 				if (par_info.complete_labels) {
 					DrawDropDownButton(buttons_left, ir.top + button_y_offset, COLOUR_YELLOW, this->clicked_row == i && this->clicked_dropdown, this->editable);
@@ -438,9 +439,10 @@ struct NewGRFParametersWindow : public Window {
 	void OnQueryTextFinished(std::optional<std::string> str) override
 	{
 		if (!str.has_value() || str->empty()) return;
-		int32_t value = atoi(str->c_str());
+		auto value = ParseInteger<int32_t>(*str);
+		if (!value.has_value()) return;
 		GRFParameterInfo &par_info = this->GetParameterInfo(this->clicked_row);
-		this->grf_config.SetValue(par_info, value);
+		this->grf_config.SetValue(par_info, *value);
 		this->SetDirty();
 	}
 
@@ -588,7 +590,7 @@ static void FillGrfidMap(const GRFConfigList &lst, GrfIdMap &grfid_map)
 }
 
 static void NewGRFConfirmationCallback(Window *w, bool confirmed);
-static void ShowSavePresetWindow(const char *initial_text);
+static void ShowSavePresetWindow(std::string_view initial_text);
 
 /**
  * Window for showing NewGRF files
@@ -906,9 +908,9 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 			}
 
 			case WID_NS_NEWGRF_INFO_TITLE: {
-				/* Create the nice grayish rectangle at the details top. */
-				GfxFillRect(r.Shrink(WidgetDimensions::scaled.bevel), PC_DARK_BLUE);
-				DrawString(r.left, r.right, CenterBounds(r.top, r.bottom, GetCharacterHeight(FS_NORMAL)), STR_NEWGRF_SETTINGS_INFO_TITLE, TC_FROMSTRING, SA_HOR_CENTER);
+				/* Create the nice darker rectangle at the details top. */
+				GfxFillRect(r.Shrink(WidgetDimensions::scaled.bevel), GetColourGradient(COLOUR_MAUVE, SHADE_NORMAL));
+				DrawString(r.left, r.right, CentreBounds(r.top, r.bottom, GetCharacterHeight(FS_NORMAL)), STR_NEWGRF_SETTINGS_INFO_TITLE, TC_FROMSTRING, SA_HOR_CENTER);
 				break;
 			}
 
@@ -956,13 +958,13 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 			}
 
 			case WID_NS_PRESET_SAVE:
-				ShowSavePresetWindow((this->preset == -1) ? nullptr : this->grf_presets[this->preset].c_str());
+				ShowSavePresetWindow((this->preset == -1) ? std::string_view{} : this->grf_presets[this->preset]);
 				break;
 
 			case WID_NS_PRESET_DELETE:
 				if (this->preset == -1) return;
 
-				DeleteGRFPresetFromConfig(this->grf_presets[this->preset].c_str());
+				DeleteGRFPresetFromConfig(this->grf_presets[this->preset]);
 				this->grf_presets = GetGRFPresetList();
 				this->preset = -1;
 				this->InvalidateData();
@@ -1153,7 +1155,7 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 		this->preset = index;
 
 		if (index != -1) {
-			this->actives = LoadGRFPresetFromConfig(this->grf_presets[index].c_str());
+			this->actives = LoadGRFPresetFromConfig(this->grf_presets[index]);
 		}
 		this->avails.ForceRebuild();
 
@@ -1168,7 +1170,7 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 	{
 		if (!str.has_value()) return;
 
-		SaveGRFPresetToConfig(str->c_str(), this->actives);
+		SaveGRFPresetToConfig(*str, this->actives);
 		this->grf_presets = GetGRFPresetList();
 
 		/* Switch to this preset */
@@ -1517,13 +1519,13 @@ void ShowMissingContentWindow(const GRFConfigList &list)
 	for (const auto &c : list) {
 		if (c->status != GCS_NOT_FOUND && !c->flags.Test(GRFConfigFlag::Compatible)) continue;
 
-		ContentInfo *ci = new ContentInfo();
+		auto ci = std::make_unique<ContentInfo>();
 		ci->type = CONTENT_TYPE_NEWGRF;
 		ci->state = ContentInfo::DOES_NOT_EXIST;
 		ci->name = c->GetName();
 		ci->unique_id = std::byteswap(c->ident.grfid);
 		ci->md5sum = c->flags.Test(GRFConfigFlag::Compatible) ? c->original_md5sum : c->ident.md5sum;
-		cv.push_back(ci);
+		cv.push_back(std::move(ci));
 	}
 	ShowNetworkContentListWindow(cv.empty() ? nullptr : &cv, CONTENT_TYPE_NEWGRF);
 }
@@ -2018,12 +2020,12 @@ struct SavePresetWindow : public Window {
 
 	/**
 	 * Constructor of the save preset window.
-	 * @param initial_text Initial text to display in the edit box, or \c nullptr.
+	 * @param initial_text Initial text to display in the edit box.
 	 */
-	SavePresetWindow(const char *initial_text) : Window(_save_preset_desc), presetname_editbox(32)
+	SavePresetWindow(std::string_view initial_text) : Window(_save_preset_desc), presetname_editbox(32)
 	{
 		this->presets = GetGRFPresetList();
-		if (initial_text != nullptr) {
+		if (!initial_text.empty()) {
 			for (uint i = 0; i < this->presets.size(); i++) {
 				if (this->presets[i] == initial_text) {
 					this->selected = i;
@@ -2042,7 +2044,7 @@ struct SavePresetWindow : public Window {
 
 		this->vscroll->SetCount(this->presets.size());
 		this->SetFocusedWidget(WID_SVP_EDITBOX);
-		if (initial_text != nullptr) this->presetname_editbox.text.Assign(initial_text);
+		this->presetname_editbox.text.Assign(initial_text);
 	}
 
 	~SavePresetWindow()
@@ -2110,7 +2112,10 @@ struct SavePresetWindow : public Window {
 
 			case WID_SVP_SAVE: {
 				Window *w = FindWindowById(WC_GAME_OPTIONS, WN_GAME_OPTIONS_NEWGRF_STATE);
-				if (w != nullptr && !StrEmpty(this->presetname_editbox.text.GetText())) w->OnQueryTextFinished(this->presetname_editbox.text.GetText());
+				if (w != nullptr) {
+					auto text = this->presetname_editbox.text.GetText();
+					if (!text.empty()) w->OnQueryTextFinished(std::string{text});
+				}
 				this->Close();
 				break;
 			}
@@ -2127,7 +2132,7 @@ struct SavePresetWindow : public Window {
  * Open the window for saving a preset.
  * @param initial_text Initial text to display in the edit box, or \c nullptr.
  */
-static void ShowSavePresetWindow(const char *initial_text)
+static void ShowSavePresetWindow(std::string_view initial_text)
 {
 	CloseWindowByClass(WC_SAVE_PRESET);
 	new SavePresetWindow(initial_text);
@@ -2194,7 +2199,7 @@ struct ScanProgressWindow : public Window {
 				Rect ir = r.Shrink(WidgetDimensions::scaled.bevel);
 				uint percent = scanned * 100 / std::max(1U, _settings_client.gui.last_newgrf_count);
 				DrawFrameRect(ir.WithWidth(ir.Width() * percent / 100, _current_text_dir == TD_RTL), COLOUR_MAUVE, {});
-				DrawString(ir.left, ir.right, CenterBounds(ir.top, ir.bottom, GetCharacterHeight(FS_NORMAL)), GetString(STR_GENERATION_PROGRESS, percent), TC_FROMSTRING, SA_HOR_CENTER);
+				DrawString(ir.left, ir.right, CentreBounds(ir.top, ir.bottom, GetCharacterHeight(FS_NORMAL)), GetString(STR_GENERATION_PROGRESS, percent), TC_FROMSTRING, SA_HOR_CENTER);
 				break;
 			}
 

@@ -41,6 +41,7 @@
 #include "../timer/timer_game_calendar.h"
 #include "../textfile_gui.h"
 #include "../stringfilter_type.h"
+#include "../core/string_consumer.hpp"
 
 #include "../widgets/network_widget.h"
 
@@ -502,7 +503,7 @@ public:
 
 			case WID_NG_MAPSIZE: {
 				size.width += 2 * Window::SortButtonWidth(); // Make space for the arrow
-				auto max_map_size = GetParamMaxValue(0, MAX_MAP_SIZE);
+				auto max_map_size = GetParamMaxValue(MAX_MAP_SIZE);
 				size = maxdim(size, GetStringBoundingBox(GetString(STR_NETWORK_SERVER_LIST_MAP_SIZE_SHORT, max_map_size, max_map_size)));
 				break;
 			}
@@ -623,8 +624,8 @@ public:
 		tr.top += header_height;
 
 		/* Draw the right menu */
-		/* Create the nice grayish rectangle at the details top */
-		GfxFillRect(r.WithHeight(header_height).Shrink(WidgetDimensions::scaled.bevel), PC_DARK_BLUE);
+		/* Create the nice darker rectangle at the details top */
+		GfxFillRect(r.WithHeight(header_height).Shrink(WidgetDimensions::scaled.bevel), GetColourGradient(COLOUR_LIGHT_BLUE, SHADE_NORMAL));
 		hr.top = DrawStringMultiLine(hr, header_msg, TC_FROMSTRING, SA_HOR_CENTER);
 		if (sel == nullptr) return;
 
@@ -1101,7 +1102,7 @@ struct NetworkStartServerWindow : public Window {
 
 	bool CheckServerName()
 	{
-		std::string str = this->name_editbox.text.GetText();
+		std::string str{this->name_editbox.text.GetText()};
 		if (!NetworkValidateServerName(str)) return false;
 
 		SetSettingValue(GetSettingFromName("network.server_name")->AsStringSetting(), std::move(str));
@@ -1120,12 +1121,13 @@ struct NetworkStartServerWindow : public Window {
 		if (this->widget_id == WID_NSS_SETPWD) {
 			_settings_client.network.server_password = std::move(*str);
 		} else {
-			int32_t value = atoi(str->c_str());
+			auto value = ParseInteger<int32_t>(*str);
+			if (!value.has_value()) return;
 			this->SetWidgetDirty(this->widget_id);
 			switch (this->widget_id) {
 				default: NOT_REACHED();
-				case WID_NSS_CLIENTS_TXT:    _settings_client.network.max_clients    = Clamp(value, 2, MAX_CLIENTS); break;
-				case WID_NSS_COMPANIES_TXT:  _settings_client.network.max_companies  = Clamp(value, 1, MAX_COMPANIES); break;
+				case WID_NSS_CLIENTS_TXT:    _settings_client.network.max_clients    = Clamp(*value, 2, MAX_CLIENTS); break;
+				case WID_NSS_COMPANIES_TXT:  _settings_client.network.max_companies  = Clamp(*value, 1, MAX_COMPANIES); break;
 			}
 		}
 
@@ -1900,10 +1902,10 @@ public:
 	void DrawCompany(CompanyID company_id, const Rect &r, uint &line) const
 	{
 		bool rtl = _current_text_dir == TD_RTL;
-		int text_y_offset = CenterBounds(0, this->line_height, GetCharacterHeight(FS_NORMAL));
+		int text_y_offset = CentreBounds(0, this->line_height, GetCharacterHeight(FS_NORMAL));
 
 		Dimension d = GetSpriteSize(SPR_COMPANY_ICON);
-		int offset = CenterBounds(0, this->line_height, d.height);
+		int offset = CentreBounds(0, this->line_height, d.height);
 
 		uint line_start = this->vscroll->GetPosition();
 		uint line_end = line_start + this->vscroll->GetCapacity();
@@ -1961,7 +1963,7 @@ public:
 
 				if (player_icon != 0) {
 					Dimension d2 = GetSpriteSize(player_icon);
-					int offset_y = CenterBounds(0, this->line_height, d2.height);
+					int offset_y = CentreBounds(0, this->line_height, d2.height);
 					DrawSprite(player_icon, PALETTE_TO_GREY, rtl ? tr.right - d2.width : tr.left, y + offset_y);
 					tr = tr.Indent(d2.width + WidgetDimensions::scaled.hsep_normal, rtl);
 				}
@@ -2075,7 +2077,7 @@ struct NetworkJoinStatusWindow : Window {
 						break;
 				}
 				DrawFrameRect(ir.WithWidth(ir.Width() * progress / 100, _current_text_dir == TD_RTL), COLOUR_MAUVE, {});
-				DrawString(ir.left, ir.right, CenterBounds(ir.top, ir.bottom, GetCharacterHeight(FS_NORMAL)), STR_NETWORK_CONNECTING_1 + _network_join_status, TC_FROMSTRING, SA_HOR_CENTER);
+				DrawString(ir.left, ir.right, CentreBounds(ir.top, ir.bottom, GetCharacterHeight(FS_NORMAL)), STR_NETWORK_CONNECTING_1 + _network_join_status, TC_FROMSTRING, SA_HOR_CENTER);
 				break;
 			}
 
@@ -2186,11 +2188,11 @@ struct NetworkAskRelayWindow : public Window {
 	std::string relay_connection_string{}; ///< The relay server we want to connect to.
 	std::string token{}; ///< The token for this connection.
 
-	NetworkAskRelayWindow(WindowDesc &desc, Window *parent, const std::string &server_connection_string, const std::string &relay_connection_string, const std::string &token) :
+	NetworkAskRelayWindow(WindowDesc &desc, Window *parent, std::string_view server_connection_string, std::string &&relay_connection_string, std::string &&token) :
 		Window(desc),
 		server_connection_string(server_connection_string),
-		relay_connection_string(relay_connection_string),
-		token(token)
+		relay_connection_string(std::move(relay_connection_string)),
+		token(std::move(token))
 	{
 		this->parent = parent;
 		this->InitNested(0);
@@ -2216,7 +2218,7 @@ struct NetworkAskRelayWindow : public Window {
 		}
 	}
 
-	void FindWindowPlacementAndResize([[maybe_unused]] int def_width, [[maybe_unused]] int def_height) override
+	void FindWindowPlacementAndResize(int, int, bool) override
 	{
 		/* Position query window over the calling window, ensuring it's within screen bounds. */
 		this->left = Clamp(parent->left + (parent->width / 2) - (this->width / 2), 0, _screen.width - this->width);
@@ -2276,12 +2278,12 @@ static WindowDesc _network_ask_relay_desc(
  * @param relay_connection_string The relay server we want to connect to.
  * @param token The token for this connection.
  */
-void ShowNetworkAskRelay(const std::string &server_connection_string, const std::string &relay_connection_string, const std::string &token)
+void ShowNetworkAskRelay(std::string_view server_connection_string, std::string &&relay_connection_string, std::string &&token)
 {
 	CloseWindowByClass(WC_NETWORK_ASK_RELAY, NRWCD_HANDLED);
 
 	Window *parent = GetMainWindow();
-	new NetworkAskRelayWindow(_network_ask_relay_desc, parent, server_connection_string, relay_connection_string, token);
+	new NetworkAskRelayWindow(_network_ask_relay_desc, parent, server_connection_string, std::move(relay_connection_string), std::move(token));
 }
 
 /**
@@ -2309,7 +2311,7 @@ struct NetworkAskSurveyWindow : public Window {
 		}
 	}
 
-	void FindWindowPlacementAndResize([[maybe_unused]] int def_width, [[maybe_unused]] int def_height) override
+	void FindWindowPlacementAndResize(int, int, bool) override
 	{
 		/* Position query window over the calling window, ensuring it's within screen bounds. */
 		this->left = Clamp(parent->left + (parent->width / 2) - (this->width / 2), 0, _screen.width - this->width);

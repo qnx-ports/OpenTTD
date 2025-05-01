@@ -40,11 +40,11 @@ struct VehicleScopeResolver : public ScopeResolver {
 
 	uint32_t GetRandomBits() const override;
 	uint32_t GetVariable(uint8_t variable, [[maybe_unused]] uint32_t parameter, bool &available) const override;
-	uint32_t GetTriggers() const override;
+	uint32_t GetRandomTriggers() const override;
 };
 
 /** Resolver for a vehicle (chain) */
-struct VehicleResolverObject : public ResolverObject {
+struct VehicleResolverObject : public SpecializedResolverObject<VehicleRandomTriggers> {
 	/** Application of 'wagon overrides'. */
 	enum WagonOverride : uint8_t {
 		WO_NONE,     //!< Resolve no wagon overrides.
@@ -64,7 +64,7 @@ struct VehicleResolverObject : public ResolverObject {
 
 	ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, uint8_t relative = 0) override;
 
-	const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const override;
+	ResolverResult ResolveReal(const RealSpriteGroup &group) const override;
 
 	GrfSpecFeature GetFeature() const override;
 	uint32_t GetDebugID() const override;
@@ -80,13 +80,11 @@ void SetWagonOverrideSprites(EngineID engine, CargoType cargo, const struct Spri
 const SpriteGroup *GetWagonOverrideSpriteSet(EngineID engine, CargoType cargo, EngineID overriding_engine);
 void SetCustomEngineSprites(EngineID engine, CargoType cargo, const struct SpriteGroup *group);
 
-void GetCustomEngineSprite(EngineID engine, const Vehicle *v, Direction direction, EngineImageType image_type, VehicleSpriteSeq *result);
-#define GetCustomVehicleSprite(v, direction, image_type, result) GetCustomEngineSprite(v->engine_type, v, direction, image_type, result)
-#define GetCustomVehicleIcon(et, direction, image_type, result) GetCustomEngineSprite(et, nullptr, direction, image_type, result)
+void GetCustomVehicleSprite(const Vehicle *v, Direction direction, EngineImageType image_type, VehicleSpriteSeq *result);
+void GetCustomVehicleIcon(EngineID engine, Direction direction, EngineImageType image_type, VehicleSpriteSeq *result);
 
-void GetRotorOverrideSprite(EngineID engine, const struct Aircraft *v, EngineImageType image_type, VehicleSpriteSeq *result);
-#define GetCustomRotorSprite(v, image_type, result) GetRotorOverrideSprite(v->engine_type, v, image_type, result)
-#define GetCustomRotorIcon(et, image_type, result) GetRotorOverrideSprite(et, nullptr, image_type, result)
+void GetCustomRotorSprite(const struct Aircraft *v, EngineImageType image_type, VehicleSpriteSeq *result);
+void GetCustomRotorIcon(EngineID engine, EngineImageType image_type, VehicleSpriteSeq *result);
 
 /* Forward declaration of GRFFile, to avoid unnecessary inclusion of newgrf.h
  * elsewhere... */
@@ -109,18 +107,7 @@ enum class BuildProbabilityType : uint8_t {
 
 bool TestVehicleBuildProbability(Vehicle *v, EngineID engine, BuildProbabilityType type);
 
-enum VehicleTrigger : uint8_t {
-	VEHICLE_TRIGGER_NEW_CARGO     = 0x01,
-	/* Externally triggered only for the first vehicle in chain */
-	VEHICLE_TRIGGER_DEPOT         = 0x02,
-	/* Externally triggered only for the first vehicle in chain, only if whole chain is empty */
-	VEHICLE_TRIGGER_EMPTY         = 0x04,
-	/* Not triggered externally (called for the whole chain if we got NEW_CARGO) */
-	VEHICLE_TRIGGER_ANY_NEW_CARGO = 0x08,
-	/* Externally triggered for each vehicle in chain */
-	VEHICLE_TRIGGER_CALLBACK_32   = 0x10,
-};
-void TriggerVehicle(Vehicle *veh, VehicleTrigger trigger);
+void TriggerVehicleRandomisation(Vehicle *veh, VehicleRandomTrigger trigger);
 
 void AlterVehicleListOrder(EngineID engine, uint16_t target);
 void CommitVehicleListOrderChanges();

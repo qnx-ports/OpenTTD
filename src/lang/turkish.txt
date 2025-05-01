@@ -442,7 +442,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :Oyundan Çık
 
 # Settings menu
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Seçenekler
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Ayarlar
 STR_SETTINGS_MENU_AI_SETTINGS                                   :YZ ayarları
 STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS                           :Oyun betiği ayarları
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF ayarları
@@ -959,6 +958,7 @@ STR_GAME_OPTIONS_SFX_VOLUME                                     :Ses efektleri
 STR_GAME_OPTIONS_MUSIC_VOLUME                                   :Müzik
 
 
+
 STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Para birimleri
 STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Para birimi seçimi
 
@@ -1042,6 +1042,7 @@ STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Dikey se
 
 STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :{BLACK}Geçerli sürücü: {STRING}
 
+
 STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :{BLACK}Arayüz büyüklüğü
 STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :{BLACK}Arayüz büyüklüğünü ayarlamak için kaydırın. Sürekli ayarlama için Ctrl tuşunu basılı tutun
 STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :{BLACK}Büyüklüğü otomatik algıla
@@ -1064,7 +1065,6 @@ STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :{BLACK}Bu, otom
 STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :{BLACK}Anket sonucunu önizleyin
 STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :{BLACK}Mevcut çalışan oyunun anket sonucunu göster
 
-STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}Grafikler
 
 STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK}Tazeleme oranını görüntüle
 STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :{BLACK}Kullanılacak tazeleme oranını seç
@@ -1201,8 +1201,7 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :İzin verici (�
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Uygun YZ'ler yok...{}'Çevrimiçi içerik' sistemiyle pek çok YZ indirebilirsiniz
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Ayarlar
+# Settings tree in the Game Options window
 STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Filtre:
 STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Tümünü genişlet
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Tümünü kısalt
@@ -2174,7 +2173,6 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Çok Oyu
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Seçenekler
 STR_INTRO_HIGHSCORE                                             :{BLACK}Puan Tablosu
 STR_INTRO_HELP                                                  :{BLACK}Yardım ve Kılavuzlar
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Ayarlar
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}NewGRF Ayarları
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Çevrimiçi İçeriği Kontrol Et
 STR_INTRO_AI_SETTINGS                                           :{BLACK}YZ Ayarları
@@ -2196,7 +2194,6 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}'Oyuncak
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Oyun ayarlarını aç
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Puan tablosunu aç
 STR_INTRO_TOOLTIP_HELP                                          :{BLACK}Belgelere ve çevrimiçi kaynaklara erişin
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Ayarları aç
 STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}NewGRF ayarlarını aç
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}İndirilecek yeni ve güncellenmiş içeriği kontrol et
 STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}Yapay Zeka ayarlarını göster

@@ -79,7 +79,7 @@ uint32_t GetIndustryIDAtOffset(TileIndex tile, const Industry *i, uint32_t cur_g
 		}
 	}
 	/* Not an 'old type' tile */
-	if (indtsp->grf_prop.GetSpriteGroup() != nullptr) { // tile has a spritegroup ?
+	if (indtsp->grf_prop.HasSpriteGroups()) {
 		if (indtsp->grf_prop.grfid == cur_grfid) { // same industry, same grf ?
 			return indtsp->grf_prop.local_id;
 		} else {
@@ -185,7 +185,7 @@ static uint32_t GetCountAndDistanceOfClosestInstance(uint8_t param_set_id, uint8
 			case 0x87: return GetTerrainType(this->tile);
 
 			/* Town zone */
-			case 0x88: return GetTownRadiusGroup(this->industry->town, this->tile);
+			case 0x88: return to_underlying(GetTownRadiusGroup(this->industry->town, this->tile));
 
 			/* Manhattan distance of the closest town */
 			case 0x89: return ClampTo<uint8_t>(DistanceManhattan(this->industry->town->xy, this->tile));
@@ -295,7 +295,7 @@ static uint32_t GetCountAndDistanceOfClosestInstance(uint8_t param_set_id, uint8
 		case 0x65: {
 			if (this->tile == INVALID_TILE) break;
 			TileIndex tile = GetNearbyTile(parameter, this->tile, true);
-			return GetTownRadiusGroup(this->industry->town, tile) << 16 | ClampTo<uint16_t>(DistanceManhattan(tile, this->industry->town->xy));
+			return to_underlying(GetTownRadiusGroup(this->industry->town, tile)) << 16 | ClampTo<uint16_t>(DistanceManhattan(tile, this->industry->town->xy));
 		}
 		/* Get square of Euclidean distance of closest town */
 		case 0x66: {
@@ -433,7 +433,7 @@ static uint32_t GetCountAndDistanceOfClosestInstance(uint8_t param_set_id, uint8
 	return this->industry != nullptr ? this->industry->random : 0;
 }
 
-/* virtual */ uint32_t IndustriesScopeResolver::GetTriggers() const
+/* virtual */ uint32_t IndustriesScopeResolver::GetRandomTriggers() const
 {
 	return 0;
 }
@@ -629,9 +629,8 @@ void IndustryProductionCallback(Industry *ind, int reason)
 		}
 
 		SB(object.callback_param2, 8, 16, loop);
-		const SpriteGroup *tgroup = object.Resolve();
-		if (tgroup == nullptr || tgroup->type != SGT_INDUSTRY_PRODUCTION) break;
-		const IndustryProductionSpriteGroup *group = (const IndustryProductionSpriteGroup *)tgroup;
+		const auto *group = object.Resolve<IndustryProductionSpriteGroup>();
+		if (group == nullptr) break;
 
 		if (group->version == 0xFF) {
 			/* Result was marked invalid on load, display error message */

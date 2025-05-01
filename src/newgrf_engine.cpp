@@ -45,7 +45,7 @@ const SpriteGroup *GetWagonOverrideSpriteSet(EngineID engine, CargoType cargo, E
 	const Engine *e = Engine::Get(engine);
 
 	for (const WagonOverride &wo : e->overrides) {
-		if (wo.cargo != cargo && wo.cargo != SpriteGroupCargo::SG_DEFAULT) continue;
+		if (wo.cargo != cargo && wo.cargo != CargoGRFFileProps::SG_DEFAULT) continue;
 		if (std::ranges::find(wo.engines, overriding_engine) != wo.engines.end()) return wo.group;
 	}
 	return nullptr;
@@ -309,9 +309,9 @@ static uint8_t MapAircraftMovementAction(const Aircraft *v)
 	return this->v == nullptr ? 0 : this->v->random_bits;
 }
 
-/* virtual */ uint32_t VehicleScopeResolver::GetTriggers() const
+/* virtual */ uint32_t VehicleScopeResolver::GetRandomTriggers() const
 {
-	return this->v == nullptr ? 0 : this->v->waiting_triggers;
+	return this->v == nullptr ? 0 : this->v->waiting_random_triggers.base();
 }
 
 
@@ -626,7 +626,7 @@ static uint32_t VehicleGetVariable(Vehicle *v, const VehicleScopeResolver *objec
 
 				if (parameter == 0x5F) {
 					/* This seems to be the only variable that makes sense to access via var 61, but is not handled by VehicleGetVariable */
-					return (u->random_bits << 8) | u->waiting_triggers;
+					return (u->random_bits << 8) | u->waiting_random_triggers.base();
 				} else {
 					return VehicleGetVariable(u, object, parameter, GetRegister(0x10E), available);
 				}
@@ -838,8 +838,8 @@ static uint32_t VehicleGetVariable(Vehicle *v, const VehicleScopeResolver *objec
 		case 0x46: return v->GetEngine()->grf_prop.local_id;
 		case 0x47: return GB(v->GetEngine()->grf_prop.local_id, 8, 8);
 		case 0x48:
-			if (v->type != VEH_TRAIN || v->spritenum != 0xFD) return v->spritenum;
-			return HasBit(Train::From(v)->flags, VRF_REVERSE_DIRECTION) ? 0xFE : 0xFD;
+			if (v->type != VEH_TRAIN || v->spritenum != CUSTOM_VEHICLE_SPRITENUM) return v->spritenum;
+			return HasBit(Train::From(v)->flags, VRF_REVERSE_DIRECTION) ? CUSTOM_VEHICLE_SPRITENUM_REVERSED : CUSTOM_VEHICLE_SPRITENUM;
 
 		case 0x49: return v->day_counter;
 		case 0x4A: return v->breakdowns_since_last_service;
@@ -891,7 +891,7 @@ static uint32_t VehicleGetVariable(Vehicle *v, const VehicleScopeResolver *objec
 		case 0x78: break; // not implemented
 		case 0x79: break; // not implemented
 		case 0x7A: return v->random_bits;
-		case 0x7B: return v->waiting_triggers;
+		case 0x7B: return v->waiting_random_triggers.base();
 		case 0x7C: break; // vehicle specific, see below
 		case 0x7D: break; // vehicle specific, see below
 		case 0x7E: break; // not implemented
@@ -998,28 +998,28 @@ static uint32_t VehicleGetVariable(Vehicle *v, const VehicleScopeResolver *objec
 }
 
 
-/* virtual */ const SpriteGroup *VehicleResolverObject::ResolveReal(const RealSpriteGroup *group) const
+/* virtual */ ResolverResult VehicleResolverObject::ResolveReal(const RealSpriteGroup &group) const
 {
 	const Vehicle *v = this->self_scope.v;
 
 	if (v == nullptr) {
-		if (!group->loading.empty()) return group->loading[0];
-		if (!group->loaded.empty())  return group->loaded[0];
-		return nullptr;
+		if (!group.loading.empty()) return group.loading[0];
+		if (!group.loaded.empty()) return group.loaded[0];
+		return std::monostate{};
 	}
 
 	const Order &order = v->First()->current_order;
 	bool not_loading = (order.GetUnloadType() & OUFB_NO_UNLOAD) && (order.GetLoadType() & OLFB_NO_LOAD);
 	bool in_motion = !order.IsType(OT_LOADING) || not_loading;
 
-	uint totalsets = in_motion ? (uint)group->loaded.size() : (uint)group->loading.size();
+	uint totalsets = static_cast<uint>(in_motion ? group.loaded.size() : group.loading.size());
 
-	if (totalsets == 0) return nullptr;
+	if (totalsets == 0) return std::monostate{};
 
 	uint set = (v->cargo.StoredCount() * totalsets) / std::max<uint16_t>(1u, v->cargo_cap);
 	set = std::min(set, totalsets - 1);
 
-	return in_motion ? group->loaded[set] : group->loading[set];
+	return in_motion ? group.loaded[set] : group.loading[set];
 }
 
 GrfSpecFeature VehicleResolverObject::GetFeature() const
@@ -1061,14 +1061,14 @@ static const GRFFile *GetEngineGrfFile(EngineID engine_type)
  */
 VehicleResolverObject::VehicleResolverObject(EngineID engine_type, const Vehicle *v, WagonOverride wagon_override, bool rotor_in_gui,
 		CallbackID callback, uint32_t callback_param1, uint32_t callback_param2)
-	: ResolverObject(GetEngineGrfFile(engine_type), callback, callback_param1, callback_param2),
+	: SpecializedResolverObject<VehicleRandomTriggers>(GetEngineGrfFile(engine_type), callback, callback_param1, callback_param2),
 	self_scope(*this, engine_type, v, rotor_in_gui),
 	parent_scope(*this, engine_type, ((v != nullptr) ? v->First() : v), rotor_in_gui),
 	relative_scope(*this, engine_type, v, rotor_in_gui),
 	cached_relative_count(0)
 {
 	if (wagon_override == WO_SELF) {
-		this->root_spritegroup = GetWagonOverrideSpriteSet(engine_type, SpriteGroupCargo::SG_DEFAULT, engine_type);
+		this->root_spritegroup = GetWagonOverrideSpriteSet(engine_type, CargoGRFFileProps::SG_DEFAULT, engine_type);
 	} else {
 		if (wagon_override != WO_NONE && v != nullptr && v->IsGroundVehicle()) {
 			assert(v->engine_type == engine_type); // overrides make little sense with fake scopes
@@ -1085,16 +1085,13 @@ VehicleResolverObject::VehicleResolverObject(EngineID engine_type, const Vehicle
 
 		if (this->root_spritegroup == nullptr) {
 			const Engine *e = Engine::Get(engine_type);
-			CargoType cargo = v != nullptr ? v->cargo_type : SpriteGroupCargo::SG_PURCHASE;
-			this->root_spritegroup = e->grf_prop.GetSpriteGroup(cargo);
-			if (this->root_spritegroup == nullptr) this->root_spritegroup = e->grf_prop.GetSpriteGroup(SpriteGroupCargo::SG_DEFAULT);
+			CargoType cargo = v != nullptr ? v->cargo_type : CargoGRFFileProps::SG_PURCHASE;
+			this->root_spritegroup = e->grf_prop.GetFirstSpriteGroupOf({cargo, CargoGRFFileProps::SG_DEFAULT});
 		}
 	}
 }
 
-
-
-void GetCustomEngineSprite(EngineID engine, const Vehicle *v, Direction direction, EngineImageType image_type, VehicleSpriteSeq *result)
+static void GetCustomEngineSprite(EngineID engine, const Vehicle *v, Direction direction, EngineImageType image_type, VehicleSpriteSeq *result)
 {
 	VehicleResolverObject object(engine, v, VehicleResolverObject::WO_CACHED, false, CBID_NO_CALLBACK);
 	result->Clear();
@@ -1104,10 +1101,10 @@ void GetCustomEngineSprite(EngineID engine, const Vehicle *v, Direction directio
 	for (uint stack = 0; stack < max_stack; ++stack) {
 		object.ResetState();
 		object.callback_param1 = image_type | (stack << 8);
-		const SpriteGroup *group = object.Resolve();
+		const auto *group = object.Resolve<ResultSpriteGroup>();
 		uint32_t reg100 = sprite_stack ? GetRegister(0x100) : 0;
-		if (group != nullptr && group->GetNumResults() != 0) {
-			result->seq[result->count].sprite = group->GetResult() + (direction % group->GetNumResults());
+		if (group != nullptr && group->num_sprites != 0) {
+			result->seq[result->count].sprite = group->sprite + (direction % group->num_sprites);
 			result->seq[result->count].pal    = GB(reg100, 0, 16); // zero means default recolouring
 			result->count++;
 		}
@@ -1115,8 +1112,17 @@ void GetCustomEngineSprite(EngineID engine, const Vehicle *v, Direction directio
 	}
 }
 
+void GetCustomVehicleSprite(const Vehicle *v, Direction direction, EngineImageType image_type, VehicleSpriteSeq *result)
+{
+	GetCustomEngineSprite(v->engine_type, v, direction, image_type, result);
+}
 
-void GetRotorOverrideSprite(EngineID engine, const struct Aircraft *v, EngineImageType image_type, VehicleSpriteSeq *result)
+void GetCustomVehicleIcon(EngineID engine, Direction direction, EngineImageType image_type, VehicleSpriteSeq *result)
+{
+	GetCustomEngineSprite(engine, nullptr, direction, image_type, result);
+}
+
+static void GetRotorOverrideSprite(EngineID engine, const struct Aircraft *v, EngineImageType image_type, VehicleSpriteSeq *result)
 {
 	const Engine *e = Engine::Get(engine);
 
@@ -1138,10 +1144,10 @@ void GetRotorOverrideSprite(EngineID engine, const struct Aircraft *v, EngineIma
 	for (uint stack = 0; stack < max_stack; ++stack) {
 		object.ResetState();
 		object.callback_param1 = image_type | (stack << 8);
-		const SpriteGroup *group = object.Resolve();
+		const auto *group = object.Resolve<ResultSpriteGroup>();
 		uint32_t reg100 = sprite_stack ? GetRegister(0x100) : 0;
-		if (group != nullptr && group->GetNumResults() != 0) {
-			result->seq[result->count].sprite = group->GetResult() + (rotor_pos % group->GetNumResults());
+		if (group != nullptr && group->num_sprites != 0) {
+			result->seq[result->count].sprite = group->sprite + (rotor_pos % group->num_sprites);
 			result->seq[result->count].pal    = GB(reg100, 0, 16); // zero means default recolouring
 			result->count++;
 		}
@@ -1149,6 +1155,15 @@ void GetRotorOverrideSprite(EngineID engine, const struct Aircraft *v, EngineIma
 	}
 }
 
+void GetCustomRotorSprite(const struct Aircraft *v, EngineImageType image_type, VehicleSpriteSeq *result)
+{
+	GetRotorOverrideSprite(v->engine_type, v, image_type, result);
+}
+
+void GetCustomRotorIcon(EngineID engine, EngineImageType image_type, VehicleSpriteSeq *result)
+{
+	GetRotorOverrideSprite(engine, nullptr, image_type, result);
+}
 
 /**
  * Check if a wagon is currently using a wagon override
@@ -1231,20 +1246,19 @@ bool TestVehicleBuildProbability(Vehicle *v, EngineID engine, BuildProbabilityTy
 	return p + RandomRange(PROBABILITY_RANGE) >= PROBABILITY_RANGE;
 }
 
-static void DoTriggerVehicle(Vehicle *v, VehicleTrigger trigger, uint16_t base_random_bits, bool first)
+static void DoTriggerVehicleRandomisation(Vehicle *v, VehicleRandomTrigger trigger, uint16_t base_random_bits, bool first)
 {
 	/* We can't trigger a non-existent vehicle... */
 	assert(v != nullptr);
 
 	VehicleResolverObject object(v->engine_type, v, VehicleResolverObject::WO_CACHED, false, CBID_RANDOM_TRIGGER);
-	object.waiting_triggers = v->waiting_triggers | trigger;
-	v->waiting_triggers = object.waiting_triggers; // store now for var 5F
+	v->waiting_random_triggers.Set(trigger); // store now for var 5F
+	object.SetWaitingRandomTriggers(v->waiting_random_triggers);
 
-	const SpriteGroup *group = object.Resolve();
-	if (group == nullptr) return;
+	object.ResolveRerandomisation();
 
 	/* Store remaining triggers. */
-	v->waiting_triggers = object.GetRemainingTriggers();
+	v->waiting_random_triggers.Reset(object.GetUsedRandomTriggers());
 
 	/* Rerandomise bits. Scopes other than SELF are invalid for rerandomisation. For bug-to-bug-compatibility with TTDP we ignore the scope. */
 	uint16_t new_random_bits = Random();
@@ -1253,7 +1267,7 @@ static void DoTriggerVehicle(Vehicle *v, VehicleTrigger trigger, uint16_t base_r
 	v->random_bits |= (first ? new_random_bits : base_random_bits) & reseed;
 
 	switch (trigger) {
-		case VEHICLE_TRIGGER_NEW_CARGO:
+		case VehicleRandomTrigger::NewCargo:
 			/* All vehicles in chain get ANY_NEW_CARGO trigger now.
 			 * So we call it for the first one and they will recurse.
 			 * Indexing part of vehicle random bits needs to be
@@ -1262,46 +1276,41 @@ static void DoTriggerVehicle(Vehicle *v, VehicleTrigger trigger, uint16_t base_r
 			 * i.e.), so we give them all the NEW_CARGO triggered
 			 * vehicle's portion of random bits. */
 			assert(first);
-			DoTriggerVehicle(v->First(), VEHICLE_TRIGGER_ANY_NEW_CARGO, new_random_bits, false);
+			DoTriggerVehicleRandomisation(v->First(), VehicleRandomTrigger::AnyNewCargo, new_random_bits, false);
 			break;
 
-		case VEHICLE_TRIGGER_DEPOT:
+		case VehicleRandomTrigger::Depot:
 			/* We now trigger the next vehicle in chain recursively.
 			 * The random bits portions may be different for each
 			 * vehicle in chain. */
-			if (v->Next() != nullptr) DoTriggerVehicle(v->Next(), trigger, 0, true);
+			if (v->Next() != nullptr) DoTriggerVehicleRandomisation(v->Next(), trigger, 0, true);
 			break;
 
-		case VEHICLE_TRIGGER_EMPTY:
+		case VehicleRandomTrigger::Empty:
 			/* We now trigger the next vehicle in chain
 			 * recursively.  The random bits portions must be same
 			 * for each vehicle in chain, so we give them all
 			 * first chained vehicle's portion of random bits. */
-			if (v->Next() != nullptr) DoTriggerVehicle(v->Next(), trigger, first ? new_random_bits : base_random_bits, false);
+			if (v->Next() != nullptr) DoTriggerVehicleRandomisation(v->Next(), trigger, first ? new_random_bits : base_random_bits, false);
 			break;
 
-		case VEHICLE_TRIGGER_ANY_NEW_CARGO:
+		case VehicleRandomTrigger::AnyNewCargo:
 			/* Now pass the trigger recursively to the next vehicle
 			 * in chain. */
 			assert(!first);
-			if (v->Next() != nullptr) DoTriggerVehicle(v->Next(), VEHICLE_TRIGGER_ANY_NEW_CARGO, base_random_bits, false);
+			if (v->Next() != nullptr) DoTriggerVehicleRandomisation(v->Next(), trigger, base_random_bits, false);
 			break;
 
-		case VEHICLE_TRIGGER_CALLBACK_32:
+		case VehicleRandomTrigger::Callback32:
 			/* Do not do any recursion */
 			break;
 	}
 }
 
-void TriggerVehicle(Vehicle *v, VehicleTrigger trigger)
+void TriggerVehicleRandomisation(Vehicle *v, VehicleRandomTrigger trigger)
 {
-	if (trigger == VEHICLE_TRIGGER_DEPOT) {
-		/* store that the vehicle entered a depot this tick */
-		VehicleEnteredDepotThisTick(v);
-	}
-
 	v->InvalidateNewGRFCacheOfChain();
-	DoTriggerVehicle(v, trigger, 0, true);
+	DoTriggerVehicleRandomisation(v, trigger, 0, true);
 	v->InvalidateNewGRFCacheOfChain();
 }
 

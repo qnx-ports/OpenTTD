@@ -201,7 +201,7 @@ public:
 				DrawCompanyIcon(c->index, icon.left, text.top + icon_y_offset);
 
 				if (this->town->exclusivity == c->index) {
-					DrawSprite(SPR_EXCLUSIVE_TRANSPORT, COMPANY_SPRITE_COLOUR(c->index), exclusive.left, text.top + exclusive_y_offset);
+					DrawSprite(SPR_EXCLUSIVE_TRANSPORT, GetCompanyPalette(c->index), exclusive.left, text.top + exclusive_y_offset);
 				}
 
 				int rating = this->town->ratings[c->index];
@@ -372,7 +372,6 @@ public:
 		this->CreateNestedTree();
 
 		this->town = Town::Get(window_number);
-		if (this->town->larger_town) this->GetWidget<NWidgetCore>(WID_TV_CAPTION)->SetString(STR_TOWN_VIEW_CITY_CAPTION);
 
 		this->FinishInitNested(window_number);
 
@@ -392,7 +391,7 @@ public:
 
 	std::string GetWidgetString(WidgetID widget, StringID stringid) const override
 	{
-		if (widget == WID_TV_CAPTION) return GetString(STR_TOWN_VIEW_TOWN_CAPTION, this->town->index);
+		if (widget == WID_TV_CAPTION) return GetString(this->town->larger_town ? STR_TOWN_VIEW_CITY_CAPTION : STR_TOWN_VIEW_TOWN_CAPTION, this->town->index);
 
 		return this->Window::GetWidgetString(widget, stringid);
 	}
@@ -644,7 +643,7 @@ static constexpr NWidgetPart _nested_town_editor_view_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_BROWN),
 		NWidget(WWT_PUSHIMGBTN, COLOUR_BROWN, WID_TV_CHANGE_NAME), SetAspect(WidgetDimensions::ASPECT_RENAME), SetSpriteTip(SPR_RENAME, STR_TOWN_VIEW_RENAME_TOOLTIP),
-		NWidget(WWT_CAPTION, COLOUR_BROWN, WID_TV_CAPTION), SetStringTip(STR_TOWN_VIEW_TOWN_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
+		NWidget(WWT_CAPTION, COLOUR_BROWN, WID_TV_CAPTION), SetToolTip(STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 		NWidget(WWT_PUSHIMGBTN, COLOUR_BROWN, WID_TV_CENTER_VIEW), SetAspect(WidgetDimensions::ASPECT_LOCATION), SetSpriteTip(SPR_GOTO_LOCATION, STR_TOWN_VIEW_CENTER_TOOLTIP),
 		NWidget(WWT_SHADEBOX, COLOUR_BROWN),
 		NWidget(WWT_DEFSIZEBOX, COLOUR_BROWN),
@@ -1336,45 +1335,6 @@ void InitializeTownGui()
 }
 
 /**
- * Draw representation of a house tile for GUI purposes.
- * @param x Position x of image.
- * @param y Position y of image.
- * @param spec House spec to draw.
- * @param house_id House ID to draw.
- * @param view The house's 'view'.
- */
-void DrawNewHouseTileInGUI(int x, int y, const HouseSpec *spec, HouseID house_id, int view)
-{
-	HouseResolverObject object(house_id, INVALID_TILE, nullptr, CBID_NO_CALLBACK, 0, 0, true, view);
-	const SpriteGroup *group = object.Resolve();
-	if (group == nullptr || group->type != SGT_TILELAYOUT) return;
-
-	uint8_t stage = TOWN_HOUSE_COMPLETED;
-	const DrawTileSprites *dts = reinterpret_cast<const TileLayoutSpriteGroup *>(group)->ProcessRegisters(&stage);
-
-	PaletteID palette = GENERAL_SPRITE_COLOUR(spec->random_colour[0]);
-	if (spec->callback_mask.Test(HouseCallbackMask::Colour)) {
-		uint16_t callback = GetHouseCallback(CBID_HOUSE_COLOUR, 0, 0, house_id, nullptr, INVALID_TILE, true, view);
-		if (callback != CALLBACK_FAILED) {
-			/* If bit 14 is set, we should use a 2cc colour map, else use the callback value. */
-			palette = HasBit(callback, 14) ? GB(callback, 0, 8) + SPR_2CCMAP_BASE : callback;
-		}
-	}
-
-	SpriteID image = dts->ground.sprite;
-	PaletteID pal  = dts->ground.pal;
-
-	if (HasBit(image, SPRITE_MODIFIER_CUSTOM_SPRITE)) image += stage;
-	if (HasBit(pal, SPRITE_MODIFIER_CUSTOM_SPRITE)) pal += stage;
-
-	if (GB(image, 0, SPRITE_WIDTH) != 0) {
-		DrawSprite(image, GroundSpritePaletteTransform(image, pal, palette), x, y);
-	}
-
-	DrawNewGRFTileSeqInGUI(x, y, dts, stage, palette);
-}
-
-/**
  * Draw a house that does not exist.
  * @param x Position x of image.
  * @param y Position y of image.
@@ -1389,7 +1349,7 @@ void DrawHouseInGUI(int x, int y, HouseID house_id, int view)
 			 * spritegroup associated with them, then the sprite for the substitute
 			 * house id is drawn instead. */
 			const HouseSpec *spec = HouseSpec::Get(house_id);
-			if (spec->grf_prop.GetSpriteGroup() != nullptr) {
+			if (spec->grf_prop.HasSpriteGroups()) {
 				DrawNewHouseTileInGUI(x, y, spec, house_id, view);
 				return;
 			} else {
@@ -1461,13 +1421,7 @@ public:
 	 */
 	void SetClimateMask()
 	{
-		switch (_settings_game.game_creation.landscape) {
-			case LandscapeType::Temperate: this->climate_mask = HZ_TEMP; break;
-			case LandscapeType::Arctic:    this->climate_mask = HZ_SUBARTC_ABOVE | HZ_SUBARTC_BELOW; break;
-			case LandscapeType::Tropic:    this->climate_mask = HZ_SUBTROPIC; break;
-			case LandscapeType::Toyland:   this->climate_mask = HZ_TOYLND; break;
-			default: NOT_REACHED();
-		}
+		this->climate_mask = GetClimateMaskForLandscape();
 
 		/* In some cases, not all 'classes' (house zones) have distinct houses, so we need to disable those.
 		 * As we need to check all types, and this cannot change with the picker window open, pre-calculate it.
@@ -1495,7 +1449,7 @@ public:
 
 	/* Houses do not have classes like NewGRFClass. We'll make up fake classes based on town zone
 	 * availability instead. */
-	static inline const std::array<StringID, HZB_END> zone_names = {
+	static inline const std::array<StringID, NUM_HOUSE_ZONES> zone_names = {
 		STR_HOUSE_PICKER_CLASS_ZONE1,
 		STR_HOUSE_PICKER_CLASS_ZONE2,
 		STR_HOUSE_PICKER_CLASS_ZONE3,
@@ -1540,16 +1494,19 @@ public:
 	int GetSelectedType() const override { return sel_type; }
 	void SetSelectedType(int id) const override { sel_type = id; }
 
+	static HouseZone GetHouseZoneFromClassId(int cls_id) { return static_cast<HouseZone>(to_underlying(HouseZone::TownEdge) + cls_id); }
+	static int GetClassIdFromHouseZone(HouseZones zones) { return FindFirstBit((zones & HZ_ZONE_ALL).base()) - to_underlying(HouseZone::TownEdge); }
+
 	StringID GetTypeName(int cls_id, int id) const override
 	{
 		const HouseSpec *spec = HouseSpec::Get(id);
 		if (spec == nullptr) return INVALID_STRING_ID;
 		if (!spec->enabled) return INVALID_STRING_ID;
-		if ((spec->building_availability & climate_mask) == 0) return INVALID_STRING_ID;
-		if (!HasBit(spec->building_availability, cls_id)) return INVALID_STRING_ID;
+		if (!spec->building_availability.Any(climate_mask)) return INVALID_STRING_ID;
+		if (!spec->building_availability.Test(GetHouseZoneFromClassId(cls_id))) return INVALID_STRING_ID;
 		for (int i = 0; i < cls_id; i++) {
 			/* Don't include if it's already included in an earlier zone. */
-			if (HasBit(spec->building_availability, i)) return INVALID_STRING_ID;
+			if (spec->building_availability.Test(GetHouseZoneFromClassId(i))) return INVALID_STRING_ID;
 		}
 
 		return GetHouseName(spec);
@@ -1560,11 +1517,11 @@ public:
 		const auto *spec = HouseSpec::Get(id);
 		if (spec == nullptr) return {};
 		if (!spec->enabled) return {};
-		if ((spec->building_availability & climate_mask) == 0) return {};
-		if (!HasBit(spec->building_availability, cls_id)) return {};
+		if (!spec->building_availability.Any(climate_mask)) return {};
+		if (!spec->building_availability.Test(GetHouseZoneFromClassId(cls_id))) return {};
 		for (int i = 0; i < cls_id; i++) {
 			/* Don't include if it's already included in an earlier zone. */
-			if (HasBit(spec->building_availability, i)) return {};
+			if (spec->building_availability.Test(GetHouseZoneFromClassId(i))) return {};
 		}
 
 		return spec->badges;
@@ -1588,7 +1545,7 @@ public:
 			if (*it == 0) continue;
 			HouseID house = static_cast<HouseID>(std::distance(id_count.begin(), it));
 			const HouseSpec *hs = HouseSpec::Get(house);
-			int class_index = FindFirstBit(hs->building_availability & HZ_ZONALL);
+			int class_index = GetClassIdFromHouseZone(hs->building_availability);
 			items.insert({0, house, class_index, house});
 		}
 	}
@@ -1609,7 +1566,7 @@ public:
 					/* Not preset, hide from UI. */
 					dst.insert({item.grfid, item.local_id, -1, -1});
 				} else {
-					int class_index = FindFirstBit(it->building_availability & HZ_ZONALL);
+					int class_index = GetClassIdFromHouseZone(it->building_availability);
 					dst.insert( {item.grfid, item.local_id, class_index, it->Index()});
 				}
 			}
@@ -1743,7 +1700,7 @@ struct BuildHouseWindow : public PickerWindow {
 
 	void OnInit() override
 	{
-		this->InvalidateData(PickerInvalidation::Position);
+		this->InvalidateData(PICKER_INVALIDATION_ALL);
 		this->PickerWindow::OnInit();
 	}
 

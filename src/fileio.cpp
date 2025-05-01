@@ -35,7 +35,7 @@ static bool _do_scan_working_directory = true;
 extern std::string _config_file;
 extern std::string _highscore_file;
 
-static const char * const _subdirs[] = {
+static const std::string_view _subdirs[] = {
 	"",
 	"save" PATHSEP,
 	"save" PATHSEP "autosave" PATHSEP,
@@ -118,7 +118,7 @@ static void FillValidSearchPaths(bool only_local_path)
  * @param subdir the subdirectory to look in
  * @return true if and only if the file can be opened
  */
-bool FioCheckFileExists(const std::string &filename, Subdirectory subdir)
+bool FioCheckFileExists(std::string_view filename, Subdirectory subdir)
 {
 	auto f = FioFOpenFile(filename, "rb", subdir);
 	return f.has_value();
@@ -141,7 +141,7 @@ bool FileExists(const std::string &filename)
  * @param filename Filename to look for.
  * @return String containing the path if the path was found, else an empty string.
  */
-std::string FioFindFullPath(Subdirectory subdir, const std::string &filename)
+std::string FioFindFullPath(Subdirectory subdir, std::string_view filename)
 {
 	assert(subdir < NUM_SUBDIRS);
 
@@ -165,7 +165,7 @@ std::string FioGetDirectory(Searchpath sp, Subdirectory subdir)
 	assert(subdir < NUM_SUBDIRS);
 	assert(sp < NUM_SEARCHPATHS);
 
-	return _searchpaths[sp] + _subdirs[subdir];
+	return fmt::format("{}{}", _searchpaths[sp], _subdirs[subdir]);
 }
 
 std::string FioFindDirectory(Subdirectory subdir)
@@ -180,7 +180,7 @@ std::string FioFindDirectory(Subdirectory subdir)
 	return _personal_dir;
 }
 
-static std::optional<FileHandle> FioFOpenFileSp(const std::string &filename, const char *mode, Searchpath sp, Subdirectory subdir, size_t *filesize)
+static std::optional<FileHandle> FioFOpenFileSp(std::string_view filename, std::string_view mode, Searchpath sp, Subdirectory subdir, size_t *filesize)
 {
 #if defined(_WIN32)
 	/* fopen is implemented as a define with ellipses for
@@ -188,14 +188,14 @@ static std::optional<FileHandle> FioFOpenFileSp(const std::string &filename, con
 	 * a string, but a variable, it 'renames' the variable,
 	 * so make that variable to makes it compile happily */
 	wchar_t Lmode[5];
-	MultiByteToWideChar(CP_ACP, 0, mode, -1, Lmode, static_cast<int>(std::size(Lmode)));
+	MultiByteToWideChar(CP_ACP, 0, mode.data(), static_cast<int>(std::size(mode)), Lmode, static_cast<int>(std::size(Lmode)));
 #endif
 	std::string buf;
 
 	if (subdir == NO_DIRECTORY) {
 		buf = filename;
 	} else {
-		buf = _searchpaths[sp] + _subdirs[subdir] + filename;
+		buf = fmt::format("{}{}{}", _searchpaths[sp], _subdirs[subdir], filename);
 	}
 
 	auto f = FileHandle::Open(buf, mode);
@@ -239,7 +239,7 @@ static std::optional<FileHandle> FioFOpenFileTar(const TarFileListEntry &entry, 
  * @param subdir Subdirectory to open.
  * @return File handle of the opened file, or \c nullptr if the file is not available.
  */
-std::optional<FileHandle> FioFOpenFile(const std::string &filename, const char *mode, Subdirectory subdir, size_t *filesize)
+std::optional<FileHandle> FioFOpenFile(std::string_view filename, std::string_view mode, Subdirectory subdir, size_t *filesize)
 {
 	std::optional<FileHandle> f = std::nullopt;
 	assert(subdir < NUM_SUBDIRS || subdir == NO_DIRECTORY);
@@ -252,7 +252,7 @@ std::optional<FileHandle> FioFOpenFile(const std::string &filename, const char *
 	/* We can only use .tar in case of data-dir, and read-mode */
 	if (!f.has_value() && mode[0] == 'r' && subdir != NO_DIRECTORY) {
 		/* Filenames in tars are always forced to be lowercase */
-		std::string resolved_name = filename;
+		std::string resolved_name{filename};
 		strtolower(resolved_name);
 
 		/* Resolve ".." */
@@ -475,7 +475,7 @@ bool TarScanner::AddFile(const std::string &filename, size_t, [[maybe_unused]] c
 
 	_tar_list[this->subdir][filename] = std::string{};
 
-	std::string filename_base = FS2OTTD(std::filesystem::path(OTTD2FS(filename)).filename());
+	std::string filename_base = FS2OTTD(std::filesystem::path(OTTD2FS(filename)).filename().native());
 	SimplifyFileName(filename_base);
 
 	TarHeader th;
@@ -658,7 +658,7 @@ bool ExtractTar(const std::string &tar_filename, Subdirectory subdir)
  * @param exe the path from the current path to the executable
  * @note defined in the OS related files (win32.cpp, unix.cpp etc)
  */
-extern void DetermineBasePaths(const char *exe);
+extern void DetermineBasePaths(std::string_view exe);
 #else /* defined(_WIN32) */
 
 /**
@@ -668,9 +668,9 @@ extern void DetermineBasePaths(const char *exe);
  * in the same way we remove the name from the executable name.
  * @param exe the path to the executable
  */
-static bool ChangeWorkingDirectoryToExecutable(const char *exe)
+static bool ChangeWorkingDirectoryToExecutable(std::string_view exe)
 {
-	std::string path = exe;
+	std::string path{exe};
 
 #ifdef WITH_COCOA
 	for (size_t pos = path.find_first_of('.'); pos != std::string::npos; pos = path.find_first_of('.', pos + 1)) {
@@ -746,7 +746,7 @@ static std::string GetHomeDir()
  * Determine the base (personal dir and game data dir) paths
  * @param exe the path to the executable
  */
-void DetermineBasePaths(const char *exe)
+void DetermineBasePaths(std::string_view exe)
 {
 	std::string tmp;
 	const std::string homedir = GetHomeDir();
@@ -822,7 +822,7 @@ void DetermineBasePaths(const char *exe)
 			/* _config_file is not in a folder, so use current directory. */
 			tmp = cwd;
 		} else {
-			tmp = FS2OTTD(std::filesystem::weakly_canonical(std::filesystem::path(OTTD2FS(_config_file))).parent_path());
+			tmp = FS2OTTD(std::filesystem::weakly_canonical(std::filesystem::path(OTTD2FS(_config_file))).parent_path().native());
 		}
 		AppendPathSeparator(tmp);
 		_searchpaths[SP_WORKING_DIR] = tmp;
@@ -874,7 +874,7 @@ std::string _personal_dir;
  * @param exe the path from the current path to the executable
  * @param only_local_path Whether we shouldn't fill searchpaths with global folders.
  */
-void DeterminePaths(const char *exe, bool only_local_path)
+void DeterminePaths(std::string_view exe, bool only_local_path)
 {
 	DetermineBasePaths(exe);
 	FillValidSearchPaths(only_local_path);
@@ -976,7 +976,7 @@ void DeterminePaths(const char *exe, bool only_local_path)
 	};
 
 	for (const auto &default_subdir : default_subdirs) {
-		FioCreateDirectory(_personal_dir + _subdirs[default_subdir]);
+		FioCreateDirectory(fmt::format("{}{}", _personal_dir, _subdirs[default_subdir]));
 	}
 
 	/* If we have network we make a directory for the autodownloading of content */
@@ -1074,7 +1074,7 @@ static uint ScanPath(FileScanner *fs, std::string_view extension, const std::fil
 			if (!recursive) continue;
 			num += ScanPath(fs, extension, dir_entry.path(), basepath_length, recursive);
 		} else if (dir_entry.is_regular_file()) {
-			std::string file = FS2OTTD(dir_entry.path());
+			std::string file = FS2OTTD(dir_entry.path().native());
 			if (!MatchesExtension(extension, file)) continue;
 			if (fs->AddFile(file, basepath_length, {})) num++;
 		}
@@ -1152,7 +1152,7 @@ uint FileScanner::Scan(std::string_view extension, Subdirectory sd, bool tars, b
  * @return the number of found files, i.e. the number of times that
  *         AddFile returned true.
  */
-uint FileScanner::Scan(const std::string_view extension, const std::string &directory, bool recursive)
+uint FileScanner::Scan(std::string_view extension, const std::string &directory, bool recursive)
 {
 	std::string path(directory);
 	AppendPathSeparator(path);
@@ -1166,13 +1166,13 @@ uint FileScanner::Scan(const std::string_view extension, const std::string &dire
  * @param mode Mode to open file.
  * @return FileHandle, or std::nullopt on failure.
  */
-std::optional<FileHandle> FileHandle::Open(const std::string &filename, const std::string &mode)
+std::optional<FileHandle> FileHandle::Open(const std::string &filename, std::string_view mode)
 {
 #if defined(_WIN32)
 	/* Windows also requires mode to be wchar_t. */
 	auto f = _wfopen(OTTD2FS(filename).c_str(), OTTD2FS(mode).c_str());
 #else
-	auto f = fopen(filename.c_str(), mode.c_str());
+	auto f = fopen(filename.c_str(), std::string{mode}.c_str());
 #endif /* _WIN32 */
 
 	if (f == nullptr) return std::nullopt;

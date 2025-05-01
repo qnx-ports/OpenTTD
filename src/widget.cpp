@@ -10,6 +10,7 @@
 #include "stdafx.h"
 #include "core/backup_type.hpp"
 #include "company_func.h"
+#include "settings_gui.h"
 #include "strings_type.h"
 #include "window_gui.h"
 #include "viewport_func.h"
@@ -123,13 +124,13 @@ static inline Point GetAlignedPosition(const Rect &r, const Dimension &d, String
 	if (!(align & SA_FORCE) && _current_text_dir == TD_RTL && (align & SA_HOR_MASK) != SA_HOR_CENTER) align ^= SA_RIGHT;
 	switch (align & SA_HOR_MASK) {
 		case SA_LEFT:       p.x = r.left; break;
-		case SA_HOR_CENTER: p.x = CenterBounds(r.left, r.right, d.width); break;
+		case SA_HOR_CENTER: p.x = CentreBounds(r.left, r.right, d.width); break;
 		case SA_RIGHT:      p.x = r.right + 1 - d.width; break;
 		default: NOT_REACHED();
 	}
 	switch (align & SA_VERT_MASK) {
 		case SA_TOP:         p.y = r.top; break;
-		case SA_VERT_CENTER: p.y = CenterBounds(r.top, r.bottom, d.height); break;
+		case SA_VERT_CENTER: p.y = CentreBounds(r.top, r.bottom, d.height); break;
 		case SA_BOTTOM:      p.y = r.bottom + 1 - d.height; break;
 		default: NOT_REACHED();
 	}
@@ -155,19 +156,19 @@ static Point HandleScrollbarHittest(const Scrollbar *sb, int top, int bottom, bo
 	} else {
 		button_size = NWidgetScrollbar::GetVerticalDimension().height;
 	}
-	top += button_size;    // top    points to just below the up-button
-	bottom -= button_size; // bottom points to top of the down-button
+	top += button_size;    // top points to just below the up-button
+	bottom -= button_size; // bottom points to just before the down-button
 
 	int count = sb->GetCount();
 	int cap = sb->GetCapacity();
 
 	if (count > cap) {
-		int height = (bottom - top);
+		int height = bottom + 1 - top;
 		int slider_height = std::max(button_size, cap * height / count);
 		height -= slider_height;
 
 		top += height * sb->GetPosition() / (count - cap);
-		bottom = top + slider_height;
+		bottom = top + slider_height - 1;
 	}
 
 	Point pt;
@@ -676,7 +677,7 @@ static inline void DrawCloseBox(const Rect &r, Colours colour)
 	d.width  -= offset.x;
 	d.height -= offset.y;
 	int s = ScaleSpriteTrad(1); /* Offset to account for shadow of SPR_CLOSEBOX */
-	DrawSprite(SPR_CLOSEBOX, (colour != COLOUR_WHITE ? TC_BLACK : TC_SILVER) | (1U << PALETTE_TEXT_RECOLOUR), CenterBounds(r.left, r.right, d.width - s) - offset.x, CenterBounds(r.top, r.bottom, d.height - s) - offset.y);
+	DrawSprite(SPR_CLOSEBOX, (colour != COLOUR_WHITE ? TC_BLACK : TC_SILVER) | (1U << PALETTE_TEXT_RECOLOUR), CentreBounds(r.left, r.right, d.width - s) - offset.x, CentreBounds(r.top, r.bottom, d.height - s) - offset.y);
 }
 
 /**
@@ -727,13 +728,13 @@ static inline void DrawButtonDropdown(const Rect &r, Colours colour, bool clicke
 		DrawFrameRect(r.left, r.top, r.right - dd_width, r.bottom, colour, clicked_button ? FrameFlag::Lowered : FrameFlags{});
 		DrawImageButtons(r.WithWidth(dd_width, true), WWT_DROPDOWN, colour, clicked_dropdown, SPR_ARROW_DOWN, SA_CENTER);
 		if (!str.empty()) {
-			DrawString(r.left + WidgetDimensions::scaled.dropdowntext.left, r.right - dd_width - WidgetDimensions::scaled.dropdowntext.right, CenterBounds(r.top, r.bottom, GetCharacterHeight(FS_NORMAL)), str, TC_BLACK, align);
+			DrawString(r.left + WidgetDimensions::scaled.dropdowntext.left, r.right - dd_width - WidgetDimensions::scaled.dropdowntext.right, CentreBounds(r.top, r.bottom, GetCharacterHeight(FS_NORMAL)), str, TC_BLACK, align);
 		}
 	} else {
 		DrawFrameRect(r.left + dd_width, r.top, r.right, r.bottom, colour, clicked_button ? FrameFlag::Lowered : FrameFlags{});
 		DrawImageButtons(r.WithWidth(dd_width, false), WWT_DROPDOWN, colour, clicked_dropdown, SPR_ARROW_DOWN, SA_CENTER);
 		if (!str.empty()) {
-			DrawString(r.left + dd_width + WidgetDimensions::scaled.dropdowntext.left, r.right - WidgetDimensions::scaled.dropdowntext.right, CenterBounds(r.top, r.bottom, GetCharacterHeight(FS_NORMAL)), str, TC_BLACK, align);
+			DrawString(r.left + dd_width + WidgetDimensions::scaled.dropdowntext.left, r.right - WidgetDimensions::scaled.dropdowntext.right, CentreBounds(r.top, r.bottom, GetCharacterHeight(FS_NORMAL)), str, TC_BLACK, align);
 		}
 	}
 }
@@ -2719,6 +2720,7 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, WidgetID index, const Wi
 		case WWT_TEXTBTN:
 		case WWT_PUSHTXTBTN:
 		case WWT_TEXTBTN_2:
+		case WWT_BOOLBTN:
 		case WWT_MATRIX:
 		case NWID_BUTTON_DROPDOWN:
 		case NWID_PUSHBUTTON_DROPDOWN:
@@ -2879,6 +2881,12 @@ void NWidgetLeaf::SetupSmallestSize(Window *w)
 			padding = {WidgetDimensions::scaled.frametext.Horizontal(), WidgetDimensions::scaled.framerect.Vertical()};
 			break;
 		}
+
+		case WWT_BOOLBTN:
+			size.width = SETTING_BUTTON_WIDTH;
+			size.height = SETTING_BUTTON_HEIGHT;
+			break;
+
 		case WWT_IMGBTN:
 		case WWT_IMGBTN_2:
 		case WWT_PUSHIMGBTN: {
@@ -2992,6 +3000,14 @@ void NWidgetLeaf::Draw(const Window *w)
 			DrawFrameRect(r.left, r.top, r.right, r.bottom, this->colour, (clicked) ? FrameFlag::Lowered : FrameFlags{});
 			break;
 
+		case WWT_BOOLBTN: {
+			Point pt = GetAlignedPosition(r, Dimension(SETTING_BUTTON_WIDTH, SETTING_BUTTON_HEIGHT), this->align);
+			Colours button_colour = this->widget_data.alternate_colour;
+			if (button_colour == INVALID_COLOUR) button_colour = this->colour;
+			DrawBoolButton(pt.x, pt.y, button_colour, this->colour, clicked, !this->IsDisabled());
+			break;
+		}
+
 		case WWT_IMGBTN:
 		case WWT_PUSHIMGBTN:
 		case WWT_IMGBTN_2:
@@ -3079,7 +3095,8 @@ void NWidgetLeaf::Draw(const Window *w)
 	}
 	if (this->index >= 0) w->DrawWidget(r, this->index);
 
-	if (this->IsDisabled()) {
+	if (this->IsDisabled() && this->type != WWT_BOOLBTN) {
+		/* WWT_BOOLBTN is excluded as it draws its own disabled state. */
 		GfxFillRect(r.Shrink(WidgetDimensions::scaled.bevel), GetColourGradient(this->colour, SHADE_DARKER), FILLRECT_CHECKER);
 	}
 

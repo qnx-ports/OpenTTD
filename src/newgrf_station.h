@@ -43,13 +43,13 @@ struct StationScopeResolver : public ScopeResolver {
 	}
 
 	uint32_t GetRandomBits() const override;
-	uint32_t GetTriggers() const override;
+	uint32_t GetRandomTriggers() const override;
 
 	uint32_t GetVariable(uint8_t variable, [[maybe_unused]] uint32_t parameter, bool &available) const override;
 };
 
 /** Station resolver. */
-struct StationResolverObject : public ResolverObject {
+struct StationResolverObject : public SpecializedResolverObject<StationRandomTriggers> {
 	StationScopeResolver station_scope; ///< The station scope resolver.
 	std::optional<TownScopeResolver> town_scope = std::nullopt; ///< The town scope resolver (created on the first call).
 
@@ -75,7 +75,7 @@ struct StationResolverObject : public ResolverObject {
 		}
 	}
 
-	const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const override;
+	ResolverResult ResolveReal(const RealSpriteGroup &group) const override;
 
 	GrfSpecFeature GetFeature() const override;
 	uint32_t GetDebugID() const override;
@@ -103,30 +103,15 @@ enum class StationSpecFlag : uint8_t {
 };
 using StationSpecFlags = EnumBitSet<StationSpecFlag, uint8_t>;
 
-/** Randomisation triggers for stations */
-enum StationRandomTrigger : uint8_t {
-	SRT_NEW_CARGO,        ///< Trigger station on new cargo arrival.
-	SRT_CARGO_TAKEN,      ///< Trigger station when cargo is completely taken.
-	SRT_TRAIN_ARRIVES,    ///< Trigger platform when train arrives.
-	SRT_TRAIN_DEPARTS,    ///< Trigger platform when train leaves.
-	SRT_TRAIN_LOADS,      ///< Trigger platform when train loads/unloads.
-	SRT_PATH_RESERVATION, ///< Trigger platform when train reserves path.
-};
-
 /** Station specification. */
 struct StationSpec : NewGRFSpecBase<StationClassID> {
 	StationSpec() : name(0),
 		disallowed_platforms(0), disallowed_lengths(0),
 		cargo_threshold(0), cargo_triggers(0),
-		callback_mask(0), flags(0),
-		animation({0, 0, 0, 0}) {}
-	/**
-	 * Properties related the the grf file.
-	 * NUM_CARGO real cargo plus three pseudo cargo sprite groups.
-	 * Used for obtaining the sprite offset of custom sprites, and for
-	 * evaluating callbacks.
-	 */
-	VariableGRFFileProps grf_prop;
+		callback_mask(0), flags(0)
+	{}
+
+	CargoGRFFileProps grf_prop; ///< Link to NewGRF
 	StringID name;             ///< Name of this station.
 
 	/**
@@ -170,7 +155,7 @@ struct StationSpec : NewGRFSpecBase<StationClassID> {
 	using TileFlags = EnumBitSet<TileFlag, uint8_t>;
 	std::vector<TileFlags> tileflags; ///< List of tile flags.
 
-	AnimationInfo animation;
+	AnimationInfo<StationAnimationTriggers> animation;
 
 	/** Custom platform layouts, keyed by platform and length combined. */
 	std::unordered_map<uint16_t, std::vector<uint8_t>> layouts;
@@ -223,7 +208,7 @@ bool DrawStationTile(int x, int y, RailType railtype, Axis axis, StationClassID 
 
 void AnimateStationTile(TileIndex tile);
 void TriggerStationAnimation(BaseStation *st, TileIndex tile, StationAnimationTrigger trigger, CargoType cargo_type = INVALID_CARGO);
-void TriggerStationRandomisation(Station *st, TileIndex tile, StationRandomTrigger trigger, CargoType cargo_type = INVALID_CARGO);
+void TriggerStationRandomisation(BaseStation *st, TileIndex tile, StationRandomTrigger trigger, CargoType cargo_type = INVALID_CARGO);
 void StationUpdateCachedTriggers(BaseStation *st);
 
 #endif /* NEWGRF_STATION_H */

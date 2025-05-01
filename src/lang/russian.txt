@@ -411,7 +411,7 @@ STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Закр
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}Окна можно перетаскивать, схватив за заголовок
 STR_TOOLTIP_SHADE                                               :{BLACK}Свернуть окно, оставив заголовок
 STR_TOOLTIP_DEBUG                                               :{BLACK}Показать отладочную информацию NewGRF
-STR_TOOLTIP_DEFSIZE                                             :{BLACK}Изменить размеры окна на значения по умолчанию. Ctrl+щелчок сохранит текущий размер как значение по умолчанию.
+STR_TOOLTIP_DEFSIZE                                             :{BLACK}Изменить размеры окна на значения по умолчанию. Ctrl+щелчок сохранит текущий размер как значение по умолчанию. Ctrl+двойной щелчок сбросит сохранённое значение по умолчанию.
 STR_TOOLTIP_STICKY                                              :{BLACK}Игнорировать нажатия клавиши «Закрыть все окна». Ctrl+щелчок установит такое поведение по умолчанию.
 STR_TOOLTIP_RESIZE                                              :{BLACK}Нажмите и тащите для изменения размера окна
 STR_TOOLTIP_TOGGLE_LARGE_SMALL_WINDOW                           :{BLACK}Большое/маленькое окно
@@ -569,8 +569,7 @@ STR_SCENEDIT_TOWN_MENU_BUILD_TOWN                               :Создани�
 STR_SCENEDIT_TOWN_MENU_PACE_HOUSE                               :Размещение зданий
 
 # Settings menu
-STR_SETTINGS_MENU_GAME_OPTIONS                                  :Основные настройки
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Расширенные настройки
+STR_SETTINGS_MENU_GAME_OPTIONS                                  :Настройки игры
 STR_SETTINGS_MENU_AI_SETTINGS                                   :Настройки ИИ
 STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS                           :Настройки игровых скриптов
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Настройки NewGRF
@@ -583,7 +582,7 @@ STR_SETTINGS_MENU_STATION_NAMES_LORRY                           :Грузовы�
 STR_SETTINGS_MENU_STATION_NAMES_BUS                             :Остановки автобусов
 STR_SETTINGS_MENU_STATION_NAMES_SHIP                            :Пристани
 STR_SETTINGS_MENU_STATION_NAMES_PLANE                           :Аэропорты
-STR_SETTINGS_MENU_STATION_NAMES_GHOST                           :Удалённые станции
+STR_SETTINGS_MENU_STATION_NAMES_GHOST                           :Закрытые станции
 STR_SETTINGS_MENU_WAYPOINTS_DISPLAYED                           :Показывать названия маршрутных точек
 STR_SETTINGS_MENU_SIGNS_DISPLAYED                               :Показывать метки
 STR_SETTINGS_MENU_SHOW_COMPETITOR_SIGNS                         :Показывать названия станций конкурентов
@@ -769,7 +768,7 @@ STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLA
 STR_GRAPH_CARGO_DISABLE_ALL                                     :{TINY_FONT}{BLACK}Ничего
 STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Показать все виды грузов на графике
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Скрыть все виды грузов на графике
-STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Включить/выключить отображение груза на графике
+STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Включить/отключить отображение груза на графике
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
 
 STR_GRAPH_INDUSTRY_PRODUCTION_CAPTION                           :{WHITE}График производительности: {INDUSTRY}
@@ -780,7 +779,7 @@ STR_GRAPH_PERFORMANCE_DETAIL_TOOLTIP                            :{BLACK}Пока
 
 # Graph key window
 STR_GRAPH_KEY_CAPTION                                           :{WHITE}Легенда
-STR_GRAPH_KEY_COMPANY_SELECTION_TOOLTIP                         :{BLACK}Включить/выключить отображение компании на графике
+STR_GRAPH_KEY_COMPANY_SELECTION_TOOLTIP                         :{BLACK}Включить/отключить отображение компании на графике
 
 # Company league window
 STR_COMPANY_LEAGUE_TABLE_CAPTION                                :{WHITE}Сравнительная таблица компаний
@@ -909,16 +908,16 @@ STR_SMALLMAP_TYPE_ROUTES                                        :Маршрут�
 STR_SMALLMAP_TYPE_VEGETATION                                    :Растительность
 STR_SMALLMAP_TYPE_OWNERS                                        :Владельцы
 
-STR_SMALLMAP_TOOLTIP_SHOW_LAND_CONTOURS_ON_MAP                  :{BLACK}Показать контуры земли на карте
-STR_SMALLMAP_TOOLTIP_SHOW_VEHICLES_ON_MAP                       :{BLACK}Показать транспорт на карте
-STR_SMALLMAP_TOOLTIP_SHOW_INDUSTRIES_ON_MAP                     :{BLACK}Показать предприятия на карте
+STR_SMALLMAP_TOOLTIP_SHOW_LAND_CONTOURS_ON_MAP                  :{BLACK}Показать на карте ландшафт
+STR_SMALLMAP_TOOLTIP_SHOW_VEHICLES_ON_MAP                       :{BLACK}Показать на карте транспортные средства
+STR_SMALLMAP_TOOLTIP_SHOW_INDUSTRIES_ON_MAP                     :{BLACK}Показать на карте предприятия
 STR_SMALLMAP_TOOLTIP_SHOW_LINK_STATS_ON_MAP                     :{BLACK}Показать на карте грузовые потоки
-STR_SMALLMAP_TOOLTIP_SHOW_TRANSPORT_ROUTES_ON                   :{BLACK}Показать маршруты на карте
-STR_SMALLMAP_TOOLTIP_SHOW_VEGETATION_ON_MAP                     :{BLACK}Показать растительность на карте
-STR_SMALLMAP_TOOLTIP_SHOW_LAND_OWNERS_ON_MAP                    :{BLACK}Показать владельцев земли на карте
+STR_SMALLMAP_TOOLTIP_SHOW_TRANSPORT_ROUTES_ON                   :{BLACK}Показать на карте транспортную инфраструктуру
+STR_SMALLMAP_TOOLTIP_SHOW_VEGETATION_ON_MAP                     :{BLACK}Показать на карте растительность
+STR_SMALLMAP_TOOLTIP_SHOW_LAND_OWNERS_ON_MAP                    :{BLACK}Показать на карте участки земли, находящиеся во владении компаний
 STR_SMALLMAP_TOOLTIP_INDUSTRY_SELECTION                         :{BLACK}Щелчок по типу предприятия переключает отображение его на карте. Ctrl+щелчок отключает все типы, кроме выбранного. Повторный Ctrl+щелчок включает все типы предприятий.
 STR_SMALLMAP_TOOLTIP_COMPANY_SELECTION                          :{BLACK}Щелчок по названию компании переключает отображение её собственности на карте. Ctrl+щелчок отключает отображение всех компаний, кроме выбранной. Повторный Ctrl+щелчок включает отображение всех компаний.
-STR_SMALLMAP_TOOLTIP_CARGO_SELECTION                            :{BLACK}Щелчок по названию груза переключает видимость этого груза. Ctrl+щелчок прячет все грузы кроме выбранного. Повторный Ctrl+щелчок отображает все грузы.
+STR_SMALLMAP_TOOLTIP_CARGO_SELECTION                            :{BLACK}Щелчок по названию груза переключает отображение этого груза. Ctrl+щелчок прячет все грузы кроме выбранного. Повторный Ctrl+щелчок отображает все грузы.
 
 STR_SMALLMAP_LEGENDA_ROADS                                      :{TINY_FONT}{BLACK}Автодороги
 STR_SMALLMAP_LEGENDA_RAILROADS                                  :{TINY_FONT}{BLACK}Железные дороги
@@ -929,7 +928,7 @@ STR_SMALLMAP_LEGENDA_TRAINS                                     :{TINY_FONT}{BLA
 STR_SMALLMAP_LEGENDA_ROAD_VEHICLES                              :{TINY_FONT}{BLACK}Автотранспорт
 STR_SMALLMAP_LEGENDA_SHIPS                                      :{TINY_FONT}{BLACK}Водный транспорт
 STR_SMALLMAP_LEGENDA_AIRCRAFT                                   :{TINY_FONT}{BLACK}Авиатранспорт
-STR_SMALLMAP_LEGENDA_TRANSPORT_ROUTES                           :{TINY_FONT}{BLACK}Маршруты транспорта
+STR_SMALLMAP_LEGENDA_TRANSPORT_ROUTES                           :{TINY_FONT}{BLACK}Транспортная инфраструктура
 STR_SMALLMAP_LEGENDA_FOREST                                     :{TINY_FONT}{BLACK}Лес
 STR_SMALLMAP_LEGENDA_RAILROAD_STATION                           :{TINY_FONT}{BLACK}Ж/д станция
 STR_SMALLMAP_LEGENDA_TRUCK_LOADING_BAY                          :{TINY_FONT}{BLACK}Грузовой терминал
@@ -950,7 +949,7 @@ STR_SMALLMAP_LEGENDA_INDUSTRIES                                 :{TINY_FONT}{BLA
 STR_SMALLMAP_LEGENDA_DESERT                                     :{TINY_FONT}{BLACK}Пустыня
 STR_SMALLMAP_LEGENDA_SNOW                                       :{TINY_FONT}{BLACK}Снег
 
-STR_SMALLMAP_TOOLTIP_TOGGLE_TOWN_NAMES_ON_OFF                   :{BLACK}Включить/выключить названия городов
+STR_SMALLMAP_TOOLTIP_TOGGLE_TOWN_NAMES_ON_OFF                   :{BLACK}Показать/убрать названия городов
 STR_SMALLMAP_CENTER_TOOLTIP                                     :{BLACK}Центрировать миникарту по этой позиции
 STR_SMALLMAP_INDUSTRY                                           :{TINY_FONT}{STRING} ({NUM})
 STR_SMALLMAP_LINKSTATS                                          :{TINY_FONT}{STRING}
@@ -1104,22 +1103,26 @@ STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TOOLTIP                        :{BLACK}Пока
 STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Настройки
 
 STR_GAME_OPTIONS_TAB_GENERAL                                    :Основные
-STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :{BLACK}Основные настройки игры
+STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :Основные настройки
 STR_GAME_OPTIONS_TAB_GRAPHICS                                   :Графика
-STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :{BLACK}Настройки графики
+STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :Настройки графики
 STR_GAME_OPTIONS_TAB_SOUND                                      :Звук
-STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :{BLACK}Настройки звука и музыки
+STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :Настройки звука и музыки
 STR_GAME_OPTIONS_TAB_SOCIAL                                     :Социальные
-STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :{BLACK}Настройки социальной интеграции
+STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :Настройки интеграции с социальными платформами
+STR_GAME_OPTIONS_TAB_ADVANCED                                   :Расширенные
+STR_GAME_OPTIONS_TAB_ADVANCED_TOOLTIP                           :Расширенные настройки
 
 STR_GAME_OPTIONS_VOLUME                                         :Громкость
 STR_GAME_OPTIONS_SFX_VOLUME                                     :Звуковые эффекты
 STR_GAME_OPTIONS_MUSIC_VOLUME                                   :Музыка
 
+STR_GAME_OPTIONS_SETTING                                        :{STRING}: {ORANGE}{STRING}
+
 STR_GAME_OPTIONS_VOLUME_MARK                                    :{NUM}%
 
-STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Валюта
-STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Смена используемой в игре валюты
+STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :Валюта
+STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :Выбор используемой в игре валюты
 
 STR_GAME_OPTIONS_CURRENCY_CODE                                  :{STRING} ({STRING})
 
@@ -1170,8 +1173,8 @@ STR_GAME_OPTIONS_CURRENCY_LVL                                   :Латвийс�
 STR_GAME_OPTIONS_CURRENCY_PTE                                   :Португальский эскудо
 STR_GAME_OPTIONS_CURRENCY_UAH                                   :Украинская гривна
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Автосохранение
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Интервал автосохранения игры
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :Автосохранение
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :Интервал между автоматическим сохранением игры
 
 # Autosave dropdown
 ###length 5
@@ -1181,77 +1184,79 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_30_MINUTES             :каждые 30
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_60_MINUTES             :каждые 60 минут
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_120_MINUTES            :каждые 120 минут
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Язык
-STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Язык пользовательского интерфейса
+STR_GAME_OPTIONS_LANGUAGE                                       :Язык
+STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :Язык пользовательского интерфейса
 STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING} ({NUM}% перевед{P ён ено ено})
 
-STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Полноэкранный режим
-STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Включить/выключить полноэкранный режим
+STR_GAME_OPTIONS_FULLSCREEN                                     :Полноэкранный режим
+STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :Включить/отключить полноэкранный режим
 
-STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Разрешение экрана
-STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Выбор разрешения экрана
+STR_GAME_OPTIONS_RESOLUTION                                     :Разрешение экрана
+STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :Выбор разрешения экрана
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :Другое
 STR_GAME_OPTIONS_RESOLUTION_ITEM                                :{NUM}x{NUM}
 
-STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Аппаратное ускорение
-STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Включить/выключить аппаратное ускорение. После этого игру потребуется перезапустить.
+STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :Аппаратное ускорение
+STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :Включить/отключить аппаратное ускорение. После изменения настройки игру потребуется перезапустить.
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Эта настройка будет применена только после перезапуска игры
 
-STR_GAME_OPTIONS_VIDEO_VSYNC                                    :{BLACK}Вертикальная синхронизация
-STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Включить/выключить вертикальную синхронизацию. После этого игру потребуется перезапустить. Работает только при включённом аппаратном ускорении.
+STR_GAME_OPTIONS_VIDEO_VSYNC                                    :Вертикальная синхронизация
+STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :Включить/отключить вертикальную синхронизацию. После изменения настройки игру потребуется перезапустить. Работает только при включённом аппаратном ускорении.
 
-STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :{BLACK}Видеодрайвер: {STRING}
+STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :Видеодрайвер: {STRING}
 
-STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :{BLACK}Масштаб интерфейса
-STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :{BLACK}Изменяйте масштаб интерфейса с помощью ползунка. Удерживайте Ctrl для точной настройки.
-STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :{BLACK}Автоопределение
-STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :{BLACK}Нажмите для автоматической установки масштаба интерфейса
+STR_GAME_OPTIONS_INTERFACE                                      :Интерфейс
 
-STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :{BLACK}Рельефные элементы
-STR_GAME_OPTIONS_GUI_SCALE_BEVELS_TOOLTIP                       :{BLACK}Масштабировать рельефные элементы интерфейса
+STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :Масштаб интерфейса
+STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :Изменяйте масштаб интерфейса с помощью ползунка. Удерживайте Ctrl для плавной настройки.
+STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :Автоопределение
+STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :Нажмите для автоматической установки масштаба интерфейса
 
-STR_GAME_OPTIONS_GUI_FONT_SPRITE                                :{BLACK}Использовать растровый шрифт
-STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :{BLACK}Поставьте отметку, чтобы использовать классический растровый шрифт фиксированного размера
-STR_GAME_OPTIONS_GUI_FONT_AA                                    :{BLACK}Сглаживание шрифтов
-STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :{BLACK}Поставьте отметку, чтобы включить сглаживание масштабируемых шрифтов
+STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :Рельефные элементы
+STR_GAME_OPTIONS_GUI_SCALE_BEVELS_TOOLTIP                       :Масштабировать рельефные элементы интерфейса
+
+STR_GAME_OPTIONS_GUI_FONT_SPRITE                                :Использовать растровый шрифт
+STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :Включить/отключить использование классического растрового шрифта фиксированного размера
+STR_GAME_OPTIONS_GUI_FONT_AA                                    :Сглаживание шрифтов
+STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :Включить/отключить сглаживание масштабируемых шрифтов
 
 STR_GAME_OPTIONS_GUI_SCALE_MARK                                 :{DECIMAL}x
 
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :{BLACK}Автоматический сбор данных
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :{BLACK}Разрешить сбор и отправку данных
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :{BLACK}Разрешить автоматический сбор данных о ваших настройках игры и используемых модулях. OpenTTD отправит эти данные при закрытии игры.
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :{BLACK}О сборе данных и приватности
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :{BLACK}Открыть ссылку с информацией об автоматическом сборе данных
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :{BLACK}Просмотр собранных данных
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :{BLACK}Показать данные, собранные в текущем сеансе и подготовленные к отправке
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :Автоматический сбор данных
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :Разрешить сбор и отправку данных
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :Разрешить автоматическую отправку собранных данных при выходе из игры
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :О сборе данных и приватности
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :Открыть страницу с информацией об автоматическом сборе данных
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :Просмотр собранных данных
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :Показать данные, собранные в текущем сеансе и подготовленные к отправке
 
-STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}Настройки графики
+STR_GAME_OPTIONS_DISPLAY                                        :Экран
 
-STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK}Частота обновления экрана
-STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :{BLACK}Выбор частоты обновления экрана
+STR_GAME_OPTIONS_REFRESH_RATE                                   :Частота обновления экрана
+STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :Выбор частоты обновления экрана
 STR_GAME_OPTIONS_REFRESH_RATE_ITEM                              :{NUM}{NBSP}Гц
 STR_GAME_OPTIONS_REFRESH_RATE_WARNING                           :{WHITE}Частота обновления выше 60{NBSP}Гц может отрицательно сказаться на производительности.
 
-STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Основной графический пакет
-STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Выбор основного графического пакета (его нельзя сменить в игре; только в главном меню)
-STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Дополнительная информация о выбранном графическом пакете
+STR_GAME_OPTIONS_BASE_GRF                                       :Основной графический пакет
+STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :Выбор основного графического пакета (его нельзя сменить в игре; только в главном меню)
+STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :Дополнительная информация о выбранном графическом пакете
 
-STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Основной звуковой пакет
-STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :{BLACK}Выбор основного пакета звуковых эффектов (его нельзя сменить в игре; только в главном меню)
-STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Дополнительная информация о выбранном пакете звуковых эффектов
+STR_GAME_OPTIONS_BASE_SFX                                       :Основной звуковой пакет
+STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :Выбор основного пакета звуковых эффектов (его нельзя сменить в игре; только в главном меню)
+STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :Дополнительная информация о выбранном пакете звуковых эффектов
 
-STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Основной музыкальный пакет
-STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Выбор основного музыкального пакета
-STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Дополнительная информация о выбранном музыкальном пакете
+STR_GAME_OPTIONS_BASE_MUSIC                                     :Основной музыкальный пакет
+STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :Выбор основного музыкального пакета
+STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :Дополнительная информация о выбранном музыкальном пакете
 
 STR_GAME_OPTIONS_ONLINE_CONTENT                                 :Загрузка контента
 STR_GAME_OPTIONS_ONLINE_CONTENT_TOOLTIP                         :Получить список контента для установки и обновления
 
-STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :{LTBLUE}(модули взаимодействия с социальными платформами не установлены)
+STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :(модули взаимодействия с социальными платформами не установлены)
 
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{BLACK}{STRING} ({STRING})
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_PLATFORM                         :{BLACK}Платформа:
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :{BLACK}Состояние модуля:
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{STRING} ({STRING})
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_PLATFORM                         :Платформа:
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :Состояние модуля:
 
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_RUNNING                    :{GREEN}Запущен
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_FAILED                     :{RED}Не удалось инициализировать
@@ -1368,12 +1373,11 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :дозволя�
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Модули ИИ отсутствуют.{}{}Их можно скачать через систему онлайн-контента.
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Расширенные настройки
-STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Фильтр:
-STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Развернуть всё
-STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Свернуть всё
-STR_CONFIG_SETTING_RESET_ALL                                    :{BLACK}Сбросить все значения
+# Settings tree in the Game Options window
+STR_CONFIG_SETTING_FILTER_TITLE                                 :Фильтр:
+STR_CONFIG_SETTING_EXPAND_ALL                                   :Развернуть всё
+STR_CONFIG_SETTING_COLLAPSE_ALL                                 :Свернуть всё
+STR_CONFIG_SETTING_RESET_ALL                                    :Сбросить все значения
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(нет описания)
 STR_CONFIG_SETTING_VALUE                                        :{PUSH_COLOUR}{ORANGE}{STRING}{POP_COLOUR}
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Значение по умолчанию: {ORANGE}{STRING}
@@ -1386,9 +1390,9 @@ STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Настрой�
 STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_CAPTION        :{WHITE}Внимание!
 STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_TEXT           :{WHITE}Вы уверены, что хотите сбросить все настройки игры к значениям по умолчанию?
 
-STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Категория:
-STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Тип:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Отображать в списке только настройки, соответствующие выбранной категории
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :Категория:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :Тип:
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :Отображать в списке только настройки, соответствующие выбранной категории
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Основные настройки (только самые важные)
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Расширенные настройки (практически все)
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Все настройки (включая самые непонятные)
@@ -1405,9 +1409,9 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Настрой�
 
 STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Нет -
 ###length 3
-STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Чтобы показать все результаты поиска, выберите{}{SILVER}категорию{BLACK}: {WHITE}{STRING}
-STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Чтобы показать все результаты поиска, выберите{}{SILVER}тип{BLACK}: {WHITE}Все настройки
-STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Чтобы показать все результаты поиска, выберите{}{SILVER}категорию{BLACK}: {WHITE}{STRING} {BLACK}и {SILVER}тип{BLACK}: {WHITE}Все настройки
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :Чтобы показать все результаты поиска, выберите{}{PUSH_COLOUR}{SILVER}категорию{POP_COLOUR}: {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :Чтобы показать все результаты поиска, выберите{}{PUSH_COLOUR}{SILVER}тип{POP_COLOUR}: {WHITE}Все настройки
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :Чтобы показать все результаты поиска, выберите{}{PUSH_COLOUR}{SILVER}категорию{POP_COLOUR}: {PUSH_COLOUR}{WHITE}{STRING}{POP_COLOUR} и {PUSH_COLOUR}{SILVER}тип{POP_COLOUR}: {WHITE}Все настройки
 
 ###length 3
 STR_CONFIG_SETTING_OFF                                          :нет
@@ -2014,7 +2018,7 @@ STR_CONFIG_SETTING_STATION_LENGTH_LOADING_PENALTY_HELPTEXT      :При вклю
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS                             :Учитывать ограничение скорости у вагонов: {STRING}
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS_HELPTEXT                    :При наличии в составе вагонов с ограничением скорости учитывать это ограничение при определении максимальной скорости состава
 
-STR_CONFIG_SETTING_DISABLE_ELRAILS                              :Выключить электрифицированную железную дорогу: {STRING}
+STR_CONFIG_SETTING_DISABLE_ELRAILS                              :Не требовать электрификации железной дороги: {STRING}
 STR_CONFIG_SETTING_DISABLE_ELRAILS_HELPTEXT                     :При включении этой настройки электровозы смогут ездить по неэлектрифицированной железной дороге
 
 STR_CONFIG_SETTING_NEWS_ARRIVAL_FIRST_VEHICLE_OWN               :Первое транспортное средство игрока на станции: {STRING}
@@ -2351,10 +2355,9 @@ STR_INTRO_PLAY_HEIGHTMAP                                        :{BLACK}Загр
 STR_INTRO_SCENARIO_EDITOR                                       :{BLACK}Редактор сценариев
 STR_INTRO_MULTIPLAYER                                           :{BLACK}Сетевая игра
 
-STR_INTRO_GAME_OPTIONS                                          :{BLACK}Основные настройки
+STR_INTRO_GAME_OPTIONS                                          :{BLACK}Настройки игры
 STR_INTRO_HIGHSCORE                                             :{BLACK}Таблица рекордов
 STR_INTRO_HELP                                                  :{BLACK}Помощь и документация
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Расширенные настройки
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}Настройки NewGRF
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Онлайн-контент
 STR_INTRO_AI_SETTINGS                                           :{BLACK}Настройки ИИ
@@ -2376,7 +2379,6 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Детс
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Открыть окно с основными настройками игры
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Показать таблицу рекордов
 STR_INTRO_TOOLTIP_HELP                                          :{BLACK}Ссылки на документацию и интернет-ресурсы
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Расширенные настройки игры
 STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Открыть настройки NewGRF
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Найти новый и обновлённый контент для загрузки
 STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}Открыть настройки ИИ
@@ -4169,14 +4171,14 @@ STR_BUY_COMPANY_HOSTILE_TAKEOVER                                :{WHITE}Посл
 
 # Company infrastructure window
 STR_COMPANY_INFRASTRUCTURE_VIEW_CAPTION                         :{WHITE}Инфраструктура «{COMPANY}»
-STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Ж/д участки:
+STR_COMPANY_INFRASTRUCTURE_VIEW_RAIL_SECT                       :{GOLD}Железная дорога:
 STR_COMPANY_INFRASTRUCTURE_VIEW_SIGNALS                         :{WHITE}Сигналы
-STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Дорожные участки:
-STR_COMPANY_INFRASTRUCTURE_VIEW_TRAM_SECT                       :{GOLD}Трамвайные участки:
-STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Водные поля:
+STR_COMPANY_INFRASTRUCTURE_VIEW_ROAD_SECT                       :{GOLD}Автомобильные дороги:
+STR_COMPANY_INFRASTRUCTURE_VIEW_TRAM_SECT                       :{GOLD}Трамвайные пути:
+STR_COMPANY_INFRASTRUCTURE_VIEW_WATER_SECT                      :{GOLD}Водная инфраструктура:
 STR_COMPANY_INFRASTRUCTURE_VIEW_CANALS                          :{WHITE}Каналы
 STR_COMPANY_INFRASTRUCTURE_VIEW_STATION_SECT                    :{GOLD}Станции:
-STR_COMPANY_INFRASTRUCTURE_VIEW_STATIONS                        :{WHITE}Площадь станций
+STR_COMPANY_INFRASTRUCTURE_VIEW_STATIONS                        :{WHITE}Занимаемая площадь
 STR_COMPANY_INFRASTRUCTURE_VIEW_AIRPORTS                        :{WHITE}Аэропорты
 STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_YEAR                      :{WHITE}{CURRENCY_LONG}/год
 STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_PERIOD                    :{WHITE}{CURRENCY_LONG}/цикл
@@ -4627,10 +4629,10 @@ STR_VEHICLE_VIEW_SHIP_ORDERS_TOOLTIP                            :{BLACK}Пока
 STR_VEHICLE_VIEW_AIRCRAFT_ORDERS_TOOLTIP                        :{BLACK}Показать маршрут воздушного судна. Ctrl+щелчок - показать график движения.
 
 ###length VEHICLE_TYPES
-STR_VEHICLE_VIEW_TRAIN_SHOW_DETAILS_TOOLTIP                     :{BLACK}Показать информацию о поезде
-STR_VEHICLE_VIEW_ROAD_VEHICLE_SHOW_DETAILS_TOOLTIP              :{BLACK}Показать информацию об автомобиле
-STR_VEHICLE_VIEW_SHIP_SHOW_DETAILS_TOOLTIP                      :{BLACK}Показать информацию о судне
-STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}Показать сведения об авиатранспорте.
+STR_VEHICLE_VIEW_TRAIN_SHOW_DETAILS_TOOLTIP                     :{BLACK}Показать информацию о поезде. Ctrl+щелчок - показать группу, в которой состоит транспортное средство.
+STR_VEHICLE_VIEW_ROAD_VEHICLE_SHOW_DETAILS_TOOLTIP              :{BLACK}Показать информацию об автомобиле. Ctrl+щелчок - показать группу, в которой состоит транспортное средство.
+STR_VEHICLE_VIEW_SHIP_SHOW_DETAILS_TOOLTIP                      :{BLACK}Показать информацию о судне. Ctrl+щелчок - показать группу, в которой состоит транспортное средство.
+STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}Показать сведения о воздушном судне. Ctrl+щелчок - показать группу, в которой состоит транспортное средство.
 
 ###length VEHICLE_TYPES
 STR_VEHICLE_VIEW_TRAIN_STATUS_START_STOP_TOOLTIP                :{BLACK}Текущее состояние поезда. Нажмите, чтобы остановить/запустить его.

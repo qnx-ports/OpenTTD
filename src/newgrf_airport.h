@@ -119,7 +119,7 @@ struct AirportSpec : NewGRFSpecBase<AirportClassID> {
 	uint16_t maintenance_cost;               ///< maintenance cost multiplier
 	/* Newgrf data */
 	bool enabled;                          ///< Entity still available (by default true). Newgrf can disable it, though.
-	struct GRFFileProps grf_prop;          ///< Properties related to the grf file.
+	SubstituteGRFFileProps grf_prop; ///< Properties related to the grf file.
 	std::vector<BadgeID> badges;
 
 	static const AirportSpec *Get(uint8_t type);
@@ -141,6 +141,8 @@ struct AirportSpec : NewGRFSpecBase<AirportClassID> {
 
 private:
 	static AirportSpec specs[NUM_AIRPORTS]; ///< Specs of the airports.
+
+	friend void AirportOverrideManager::SetEntitySpec(AirportSpec &&as);
 };
 
 /** Information related to airport classes. */

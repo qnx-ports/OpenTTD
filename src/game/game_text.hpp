@@ -10,6 +10,7 @@
 #ifndef GAME_TEXT_HPP
 #define GAME_TEXT_HPP
 
+#include "../string_type.h"
 #include "../strings_type.h"
 
 struct StringParam {
@@ -32,7 +33,7 @@ using StringParamsList = std::vector<StringParams>;
 std::string_view GetGameStringPtr(StringIndexInTab id);
 const StringParams &GetGameStringParams(StringIndexInTab id);
 const std::string &GetGameStringName(StringIndexInTab id);
-void RegisterGameTranslation(class Squirrel *engine);
+void RegisterGameTranslation(class Squirrel &engine);
 void ReconsiderGameScriptLanguage();
 
 /** Container for the raw (unencoded) language strings of a language. */

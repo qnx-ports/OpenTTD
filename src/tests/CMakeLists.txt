@@ -8,10 +8,13 @@ add_test_files(
     mock_spritecache.cpp
     mock_spritecache.h
     string_builder.cpp
+    string_consumer.cpp
+    string_inplace.cpp
     string_func.cpp
     test_main.cpp
     test_network_crypto.cpp
     test_script_admin.cpp
     test_window_desc.cpp
+    tilearea.cpp
     utf8.cpp
 )

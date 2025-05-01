@@ -287,7 +287,7 @@ STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Aizvērt
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}Loga virsraksts - vilkt to, lai pārvietotu logu
 STR_TOOLTIP_SHADE                                               :{BLACK}Aizēnot logu - rādīt tikai virsrakstu
 STR_TOOLTIP_DEBUG                                               :{BLACK}Rādīt NewGRF atkļūdošanas informāciju
-STR_TOOLTIP_DEFSIZE                                             :{BLACK}Mainīt loga izmēru uz tā noklusējuma izmēru. Ctrl+klikšķis, lai saglabātu esošo izmēru kā noklusējuma
+STR_TOOLTIP_DEFSIZE                                             :{BLACK}Mainīt loga izmēru uz tā noklusējuma izmēru. Ctrl+klikšķis, lai saglabātu esošo izmēru kā noklusējuma. Divreiz Ctrl+kilkšķis, lai atiestatītu saglabātos noklusējuma iestatījumus
 STR_TOOLTIP_STICKY                                              :{BLACK}Atzīmēt šo logu kā neaizveramu ar "Aizvērt visus logus" taustiņu. Ctrl+klikšķis, lai saglabātu stāvokli kā noklusējumu
 STR_TOOLTIP_RESIZE                                              :{BLACK}Klikšķināt un vilkt, lai mainītu šī loga lielumu
 STR_TOOLTIP_TOGGLE_LARGE_SMALL_WINDOW                           :{BLACK}Pārslēgties starp lielu/mazu loga izmēru
@@ -446,7 +446,6 @@ STR_SCENEDIT_TOWN_MENU_PACE_HOUSE                               :Novietojiet mā
 
 # Settings menu
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Spēles opcijas
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Iestatījumi
 STR_SETTINGS_MENU_AI_SETTINGS                                   :AI iestatījumi
 STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS                           :Spēles skripta iestatījumi
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF iestatījumi
@@ -961,22 +960,26 @@ STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TOOLTIP                        :{BLACK}Kopēt �
 STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Spēles opcijas
 
 STR_GAME_OPTIONS_TAB_GENERAL                                    :Vispārīgi
-STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :{BLACK}Izvēlieties vispārīgos iestatījumus
+STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :Izvēlieties vispārīgos iestatījumus
 STR_GAME_OPTIONS_TAB_GRAPHICS                                   :Grafika
-STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :{BLACK}Izvēlieties grafikas iestatījumus
+STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :Izvēlieties grafikas iestatījumus
 STR_GAME_OPTIONS_TAB_SOUND                                      :Skaņa
-STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :{BLACK}Izvēlieties skaņas un mūzikas iestatījumus
+STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :Izvēlieties skaņas un mūzikas iestatījumus
 STR_GAME_OPTIONS_TAB_SOCIAL                                     :Sociālais tīkls
-STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :{BLACK}Izvēlieties sociālās integrācijas iestatījumus
+STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :Izvēlieties sociālās integrācijas iestatījumus
+STR_GAME_OPTIONS_TAB_ADVANCED                                   :Papildu
+STR_GAME_OPTIONS_TAB_ADVANCED_TOOLTIP                           :Mainīt papildu iestatījumus
 
 STR_GAME_OPTIONS_VOLUME                                         :Skaļums
 STR_GAME_OPTIONS_SFX_VOLUME                                     :Skaņas efekti
 STR_GAME_OPTIONS_MUSIC_VOLUME                                   :Mūzika
 
+STR_GAME_OPTIONS_SETTING                                        :{STRING}: {ORANGE}{STRING}
+
 STR_GAME_OPTIONS_VOLUME_MARK                                    :{NUM}%
 
-STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Naudas vienības
-STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Naudas vienību izvēle
+STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :Naudas vienības
+STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :Naudas vienību izvēle
 
 STR_GAME_OPTIONS_CURRENCY_CODE                                  :{STRING} ({STRING})
 
@@ -1027,8 +1030,8 @@ STR_GAME_OPTIONS_CURRENCY_LVL                                   :Latvijas lati
 STR_GAME_OPTIONS_CURRENCY_PTE                                   :Portugāles eskudo
 STR_GAME_OPTIONS_CURRENCY_UAH                                   :Ukrainas Grivna
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Automātiskā saglabāšana
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Izvēlēties spēles automātiskās saglabāšanas starplaikus
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :Automātiskā saglabāšana
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :Izvēlēties spēles automātiskās saglabāšanas starplaikus
 
 # Autosave dropdown
 ###length 5
@@ -1038,77 +1041,79 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_30_MINUTES             :Ik pēc 30 min�
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_60_MINUTES             :Ik pēc 60 minūtēm
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_120_MINUTES            :Ik pēc 120 minūtēm
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Valoda
-STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Saskarnes valodas izvēle
+STR_GAME_OPTIONS_LANGUAGE                                       :Valoda
+STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :Saskarnes valodas izvēle
 STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING} ({NUM}% pabeigts)
 
-STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Pilnekrāna spēle
-STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Noklikšķināt uz šīs pogas, lai spēlētu pilnekrāna OpenTTD
+STR_GAME_OPTIONS_FULLSCREEN                                     :Pilnekrāna spēle
+STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :Noklikšķināt uz šīs pogas, lai spēlētu pilnekrāna OpenTTD
 
-STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Ekrāna izšķirtspēja
-STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Ekrāna izšķirtspējas izvēle
+STR_GAME_OPTIONS_RESOLUTION                                     :Ekrāna izšķirtspēja
+STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :Ekrāna izšķirtspējas izvēle
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :Cita
 STR_GAME_OPTIONS_RESOLUTION_ITEM                                :{NUM}x{NUM}
 
-STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Aparatūras pāatrinājums
-STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK} Atzīmējiet šo izvēlni, lai ļautu OpenTTD izmantot aparatūras paātrinājumu. Mainīts iestatījums tiks piemērots tikai pēc spēles restartēšanas
+STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :Aparatūras pāatrinājums
+STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :Atzīmējiet šo izvēlni, lai ļautu OpenTTD izmantot aparatūras paātrinājumu. Mainīts iestatījums tiks piemērots tikai pēc spēles restartēšanas
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Šis iestatījums stāsies spēkā tikai pēc spēles restartēšanas
 
-STR_GAME_OPTIONS_VIDEO_VSYNC                                    :{BLACK}VSync
-STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Atzīmējiet šo izvēlni, lai sinhronizētu ekrānu. Mainīts iestatījums tiks piemērots tikai pēc spēles restartēšanas. Darbojas tikai ar ieslēgtu aparatūras paātrinājumu
+STR_GAME_OPTIONS_VIDEO_VSYNC                                    :VSync
+STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :Atzīmējiet šo izvēlni, lai sinhronizētu ekrānu. Mainīts iestatījums tiks piemērots tikai pēc spēles restartēšanas. Darbojas tikai ar ieslēgtu aparatūras paātrinājumu
 
-STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :{BLACK}Esošais vadītājs: {STRING}
+STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :Esošais vadītājs: {STRING}
 
-STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :{BLACK}Saskarnes izmērs
-STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :{BLACK}Velciet slīdni, lai iestatītu saskarnes izmēru. Velciet Ctrl nepārtrauktai pielāgošanai
-STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :{BLACK}Automātiski noteikt izmēru
-STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :{BLACK}Atzīmējiet šo izvēlni, lai automātiski noteiktu interfeisa izmēru
+STR_GAME_OPTIONS_INTERFACE                                      :Saskarne
 
-STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :{BLACK}Mēroga slīpumi
-STR_GAME_OPTIONS_GUI_SCALE_BEVELS_TOOLTIP                       :{BLACK}Atzīmējiet šo izvēlni, lai mērogotu slīpumu pēc saskarnes lieluma
+STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :Saskarnes izmērs
+STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :Velciet slīdni, lai iestatītu saskarnes izmēru. Velciet Ctrl nepārtrauktai pielāgošanai
+STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :Automātiski noteikt izmēru
+STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :Atzīmējiet šo izvēlni, lai automātiski noteiktu interfeisa izmēru
 
-STR_GAME_OPTIONS_GUI_FONT_SPRITE                                :{BLACK}Izmantot tradicionālo sprite fontu
-STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :{BLACK}Atzīmējiet šo izvēli, ja vēlaties izmantot tradicionālo fiksētā izmēra sprite fontu.
-STR_GAME_OPTIONS_GUI_FONT_AA                                    :{BLACK}Anti-alias fonti
-STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :{BLACK}Atzīmējiet šo izvēli, ja vēlaties mainīt fontus ar anti-alias izmēru.
+STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :Mēroga slīpumi
+STR_GAME_OPTIONS_GUI_SCALE_BEVELS_TOOLTIP                       :Atzīmējiet šo izvēlni, lai mērogotu slīpumu pēc saskarnes lieluma
+
+STR_GAME_OPTIONS_GUI_FONT_SPRITE                                :Izmantot tradicionālo sprite fontu
+STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :Atzīmējiet šo izvēli, ja vēlaties izmantot tradicionālo fiksētā izmēra sprite fontu.
+STR_GAME_OPTIONS_GUI_FONT_AA                                    :Anti-alias fonti
+STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :Atzīmējiet šo izvēli, ja vēlaties mainīt fontus ar anti-alias izmēru.
 
 STR_GAME_OPTIONS_GUI_SCALE_MARK                                 :{DECIMAL}x
 
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :{BLACK}Automatizēta aptauja
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :{BLACK}Piedalieties automatizētā aptaujā
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :{BLACK}Ja ieslēgts, OpenTTD pārsūtīs aptauju, izejot no spēles
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :{BLACK}Par aptauju un privātumu
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :{BLACK}Tiek atvērts pārlūks ar plašāku informāciju par automatizēto aptauju
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :{BLACK}Priekšskatīt aptaujas rezultātus
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :{BLACK}Rādīt pašreizējās spēles aptaujas rezultātus
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :Automatizēta aptauja
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :Piedalieties automatizētā aptaujā
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :Ja ieslēgts, OpenTTD pārsūtīs aptauju, izejot no spēles
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :Par aptauju un privātumu
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :Tiek atvērts pārlūks ar plašāku informāciju par automatizēto aptauju
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :Priekšskatīt aptaujas rezultātus
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :Rādīt pašreizējās spēles aptaujas rezultātus
 
-STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}Grafika
+STR_GAME_OPTIONS_DISPLAY                                        :Displejs
 
-STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK}Ekrāna atsvaidzes intensitāte
-STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :{BLACK}Izvēlieties izmantojamo ekrāna atsvaidzes intensitāti
+STR_GAME_OPTIONS_REFRESH_RATE                                   :Ekrāna atsvaidzes intensitāte
+STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :Izvēlieties izmantojamo ekrāna atsvaidzes intensitāti
 STR_GAME_OPTIONS_REFRESH_RATE_ITEM                              :{NUM}Hz
 STR_GAME_OPTIONS_REFRESH_RATE_WARNING                           :{WHITE}Atsvaidzes intensitāte, kas lielāka par 60 Hz, var ietekmēt veiktspēju.
 
-STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Pamata grafikas kopa
-STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Atlasiet izmantojamo pamata grafiku (to nevar mainīt spēlē, tikai no galvenās izvēlnes)
-STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Papildinformācija par pamata grafikas kopu
+STR_GAME_OPTIONS_BASE_GRF                                       :Pamata grafikas kopa
+STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :Atlasiet izmantojamo pamata grafiku (to nevar mainīt spēlē, tikai no galvenās izvēlnes)
+STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :Papildinformācija par pamata grafikas kopu
 
-STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Pamata skaņas kopa
-STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :{BLACK}Atlasiet izmantojamās pamata skaņas (nevar mainīt spēlē, tikai galvenajā izvēlnē)
-STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Papildinformācija par pamata skaņas kopu
+STR_GAME_OPTIONS_BASE_SFX                                       :Pamata skaņas kopa
+STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :Atlasiet izmantojamās pamata skaņas (nevar mainīt spēlē, tikai galvenajā izvēlnē)
+STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :Papildinformācija par pamata skaņas kopu
 
-STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Pamata mūzikas kopa
-STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Atlasīt lietošanai pamata mūzikas kopu
-STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Papildinformācija par pamata mūzikas kopu
+STR_GAME_OPTIONS_BASE_MUSIC                                     :Pamata mūzikas kopa
+STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :Atlasīt lietošanai pamata mūzikas kopu
+STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :Papildinformācija par pamata mūzikas kopu
 
 STR_GAME_OPTIONS_ONLINE_CONTENT                                 :Iegūt saturu
 STR_GAME_OPTIONS_ONLINE_CONTENT_TOOLTIP                         :Pārbaudīt, jauna satura lejupielādi, vai atjauninājumu
 
-STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :{LTBLUE}(nav instalētu spraudņu, ko integrēt ar sociālajām platformām)
+STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :(nav instalētu spraudņu, ko integrēt ar sociālajām platformām)
 
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{BLACK}{STRING} ({STRING})
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_PLATFORM                         :{BLACK}Platforma:
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :{BLACK}Spraudņa stāvoklis:
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{STRING} ({STRING})
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_PLATFORM                         :Platforma:
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :Spraudņa stāvoklis:
 
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_RUNNING                    :{GREEN}Darbojas
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_FAILED                     :{RED}Neizdevās instalēt
@@ -1221,12 +1226,11 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :Pieļaujoša (n
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Nav pieejami derīgi MI...{}{}Jūs varat lejuplādēt dažādus MI, izmantojot pogu 'Tiešsaistes saturs'
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Iestatījumi
-STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Filtrs:
-STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Izvērst visu
-STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Sakļaut visu
-STR_CONFIG_SETTING_RESET_ALL                                    :{BLACK}Atiestatīt visas vērtības
+# Settings tree in the Game Options window
+STR_CONFIG_SETTING_FILTER_TITLE                                 :Filtrs:
+STR_CONFIG_SETTING_EXPAND_ALL                                   :Izvērst visu
+STR_CONFIG_SETTING_COLLAPSE_ALL                                 :Sakļaut visu
+STR_CONFIG_SETTING_RESET_ALL                                    :Atiestatīt visas vērtības
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(skaidrojums nav pieejams)
 STR_CONFIG_SETTING_VALUE                                        :{PUSH_COLOUR}{ORANGE}{STRING}{POP_COLOUR}
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Noklusējuma vērtība: {ORANGE}{STRING}
@@ -1239,9 +1243,9 @@ STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :uzņēmuma iest
 STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_CAPTION        :{WHITE}Uzmanību!
 STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_TEXT           :{WHITE} Šī darbība atjaunos visu spēles iestatījumu noklusējuma vērtības.{} Vai tiešām vēlaties turpināt?
 
-STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategorija:
-STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Veids:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Ierobežo turpmāko sarakstu, rādot tikai izmainītos iestatījumus
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :Kategorija:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :Veids:
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :Ierobežo turpmāko sarakstu, rādot tikai izmainītos iestatījumus
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Pamatiestatījumi (parādīt tikai svarīgākos iestatījumus)
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Papildu iestatījumi (parādīt iestatījumu vairākumu)
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Lietpratēju iestatījumi (parādīt visus iestatījumus, tai skaitā arī nestandarta)
@@ -1258,9 +1262,9 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Uzņēmuma iest
 
 STR_CONFIG_SETTINGS_NONE                                        :{WHITE}-Nav-
 ###length 3
-STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Rādīt visus meklēšanas rezultātus, iestatot{}{SILVER}Kategoriju {BLACK}uz {WHITE}{STRING}
-STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Rādīt visus meklēšanas rezultātus, iestatot{}{SILVER}Veidu {BLACK}uz {WHITE}Visi iestatījumu veidi
-STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Rādīt visus meklēšanas rezultātus, iestatot{}{SILVER}Kategorija {BLACK}uz {WHITE}{STRING} {BLACK}un {SILVER}Tips {BLACK}uz {WHITE}Visi iestatījumu veidi
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :Rādīt visus meklēšanas rezultātus, iestatot kategoriju{}{PUSH_COLOUR}{SILVER} uz {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :Rādīt visus meklēšanas rezultātus, iestatot{}{PUSH_COLOUR}{SILVER}Ierakstiet {POP_COLOUR}līdz{WHITE}Visi iestatījumu veidi
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :Rādīt visus meklēšanas rezultātus, iestatot kategoriju{}{PUSH_COLOUR}{SILVER} uz {PUSH_COLOUR}{WHITE}{STRING} {POP_COLOUR} un {PUSH_COLOUR}{SILVER} ierakstiet {POP_COLOUR} uz {WHITE} Visi iestatījumu veidi
 
 ###length 3
 STR_CONFIG_SETTING_OFF                                          :izslēgts
@@ -2022,7 +2026,7 @@ STR_CONFIG_SETTING_SOFT_LIMIT                                   :Maksimālais lo
 STR_CONFIG_SETTING_SOFT_LIMIT_HELPTEXT                          :Atvērtu nepielipušo logu skaits, pirms tie tiek automātiski aizvērti lai atbrīvotu vietu jauniem logiem
 STR_CONFIG_SETTING_SOFT_LIMIT_VALUE                             :{COMMA}
 ###setting-zero-is-special
-STR_CONFIG_SETTING_SOFT_LIMIT_DISABLED                          :izslēgts
+STR_CONFIG_SETTING_SOFT_LIMIT_DISABLED                          :Izslēgts
 
 STR_CONFIG_SETTING_ZOOM_MIN                                     :Maksimālais pietuvinājuma līmenis: {STRING}
 STR_CONFIG_SETTING_ZOOM_MIN_HELPTEXT                            :Maksimālais pietuvinājuma līmenis skatvietām. Ir jāievēro ka paaugstinot pietuvinājuma līmeni, pieaug operatīvās atmiņas izlietojums
@@ -2207,7 +2211,6 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Vairāks
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Spēles opcijas
 STR_INTRO_HIGHSCORE                                             :{BLACK}Sasniegumu tabula
 STR_INTRO_HELP                                                  :{BLACK}Palīdzība un rokasgrāmatas
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Iestatījumi
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}NewGRF iestatījumi
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Tiešsaistes saturs
 STR_INTRO_AI_SETTINGS                                           :{BLACK}MI Iestatījumi
@@ -2229,7 +2232,6 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Izvēlē
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Atvērt spēles opcijas
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Atvērt sasniegumu tabulu
 STR_INTRO_TOOLTIP_HELP                                          :{BLACK}Piekļūstiet dokumentācijai un tiešsaistes resursiem
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Atvērt iestatījumus
 STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Atvērt NewGRF iestatījumus
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Pārbaudīt vai lejupielādei nav pieejams jauns un atjaunināts saturs
 STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}Atvērt MI iestatījumus
@@ -4451,10 +4453,10 @@ STR_VEHICLE_VIEW_SHIP_ORDERS_TOOLTIP                            :{BLACK}Rādīt 
 STR_VEHICLE_VIEW_AIRCRAFT_ORDERS_TOOLTIP                        :{BLACK}Rādīt lidaparātu rīkojumus. Ctrl+klikšķis, lai rādītu lidaparātu lidojumu sarakstu
 
 ###length VEHICLE_TYPES
-STR_VEHICLE_VIEW_TRAIN_SHOW_DETAILS_TOOLTIP                     :{BLACK}Rādīt vilciena informāciju
-STR_VEHICLE_VIEW_ROAD_VEHICLE_SHOW_DETAILS_TOOLTIP              :{BLACK}Rādīt autotransporta līdzekļa informāciju
-STR_VEHICLE_VIEW_SHIP_SHOW_DETAILS_TOOLTIP                      :{BLACK}Rādīt kuģa informāciju
-STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}Rādīt lidaparāta informāciju
+STR_VEHICLE_VIEW_TRAIN_SHOW_DETAILS_TOOLTIP                     :{BLACK}Rādīt vilciena informāciju. Ctrl+klikšķis, lai parādītu vilciena grupu.
+STR_VEHICLE_VIEW_ROAD_VEHICLE_SHOW_DETAILS_TOOLTIP              :{BLACK}Rādīt transportlīdzekļa informāciju. Ctrl+klikšķis, lai parādītu transportlīdzekļa grupu
+STR_VEHICLE_VIEW_SHIP_SHOW_DETAILS_TOOLTIP                      :{BLACK}Rādīt kuģa informāciju. Ctrl+klikšķis, lai parādītu kuģa grupu
+STR_VEHICLE_VIEW_AIRCRAFT_SHOW_DETAILS_TOOLTIP                  :{BLACK}Rādīt lidaparāta informāciju. Ctrl+klikšķis, lai parādītu lidaparāta grupu.
 
 ###length VEHICLE_TYPES
 STR_VEHICLE_VIEW_TRAIN_STATUS_START_STOP_TOOLTIP                :{BLACK}Pašreizējā vilciena darbība - noklikšķiniet, lai apturētu/palaist vilcienu

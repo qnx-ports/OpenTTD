@@ -439,7 +439,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :வெளிய
 
 # Settings menu
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :விளையாட்டு விருப்ப பேரம்
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :அமைப்புகள்
 STR_SETTINGS_MENU_AI_SETTINGS                                   :AI அமைப்புகள்
 STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS                           :விளையாட்டு ஸ்கிரிப்ட் அமைப்புகள்
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :NewGRF அமைப்புகள்
@@ -929,6 +928,7 @@ STR_GAME_OPTIONS_SFX_VOLUME                                     :ஒலி வ�
 STR_GAME_OPTIONS_MUSIC_VOLUME                                   :இசை
 
 
+
 STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}நாணய பிரிவுகள்
 STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}நாணய பிரிவு தேர்ந்தெடுத்தல்
 
@@ -1010,6 +1010,7 @@ STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK} தி�
 
 STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :{BLACK}தற்போதைய driver: {STRING}
 
+
 STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :{BLACK}அளவை தானாகக் கண்டறி
 
 STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :{BLACK}Scale bevels
@@ -1027,7 +1028,6 @@ STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :{BLACK}இத�
 STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :{BLACK}கருத்துக்கணிப்பு முடிவினை முன்னோட்டமிடு
 STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :{BLACK}தற்போது ஓடிக்கொண்டிருக்கும் ஆட்டத்தின் கருத்துக்கணிப்பு முடிவினை காட்டு
 
-STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}அசைவூட்டங்கள்
 
 STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK}காட்சி புதுப்பிப்பு விகிதம்
 STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :{BLACK}காட்சி புதுப்பிப்பு விகிதத்தினைத் தேர்ந்திடு
@@ -1163,8 +1163,7 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :அனுமத
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}பொருத்தமான AI கிடைக்கவில்லை...{}'ஆன்லைன் உள்ளடக்கம்' அமைப்பு வழியாக பல AIகளை தாங்கள் பதிவிறக்கம் செய்யலாம்
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}அமைப்புகள்
+# Settings tree in the Game Options window
 STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}வடிகட்டி:
 STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}அனைத்தையும் விரிவாக்கு
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}அனைத்தையும் மூடு
@@ -1980,7 +1979,6 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}பல�
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}ஆட்டத்தின் அமைப்புகள்
 STR_INTRO_HIGHSCORE                                             :{BLACK}புள்ளிகள் பட்டியல்
 STR_INTRO_HELP                                                  :{BLACK}உதவி & கையேடுகள்
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}அமைப்புகள்
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}NewGRF அமைப்புகள்
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}கோப்புகளை இணையத்தில் தேடு
 STR_INTRO_AI_SETTINGS                                           :{BLACK}செயற்கை நுண்ணறிவு அமைப்புகள்
@@ -2002,7 +2000,6 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}'பொ�
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}ஆட்ட அமைப்புகளைத் திற
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}புள்ளிகள் பட்டியலினைத் திற
 STR_INTRO_TOOLTIP_HELP                                          :{BLACK}ஆவணங்கள் மற்றும் இணைய ஆதாரங்களுக்கான அணுகலைப் பெறுங்கள்
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}அமைப்புகளைத் திற
 STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}NewGRF அமைப்புகளைத் திற
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}பதிவிறக்கம் செய்ய புதிய மற்றும் புதுப்பிக்கப்பட்ட உள்ளடக்கத்தை பார்க்கவும்
 STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}AI அமைப்புகளைத் திற

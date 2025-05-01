@@ -251,7 +251,7 @@ void NetworkDrawChatMessage()
  * @param type The type of destination.
  * @param dest The actual destination index.
  */
-static void SendChat(const std::string &buf, DestType type, int dest)
+static void SendChat(std::string_view buf, DestType type, int dest)
 {
 	if (buf.empty()) return;
 	if (!_network_server) {
@@ -330,9 +330,9 @@ struct NetworkChatWindow : public Window {
 		this->Window::Close();
 	}
 
-	void FindWindowPlacementAndResize([[maybe_unused]] int def_width, [[maybe_unused]] int def_height) override
+	void FindWindowPlacementAndResize(int, int def_height, bool allow_resize) override
 	{
-		Window::FindWindowPlacementAndResize(_toolbar_width, def_height);
+		Window::FindWindowPlacementAndResize(_toolbar_width, def_height, allow_resize);
 	}
 
 	/**

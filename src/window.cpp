@@ -390,7 +390,7 @@ void Window::UpdateQueryStringSize()
  * @param to End of the string range.
  * @return Rectangle encompassing the string range, relative to the window.
  */
-/* virtual */ Rect Window::GetTextBoundingRect(const char *from, const char *to) const
+/* virtual */ Rect Window::GetTextBoundingRect(size_t from, size_t to) const
 {
 	if (this->nested_focus != nullptr && this->nested_focus->type == WWT_EDITBOX) {
 		return this->GetQueryString(this->nested_focus->GetIndex())->GetBoundingRect(this, this->nested_focus->GetIndex(), from, to);
@@ -685,8 +685,13 @@ static void DispatchLeftClickEvent(Window *w, int x, int y, int click_count)
 
 		case WWT_DEFSIZEBOX: {
 			if (_ctrl_pressed) {
-				w->window_desc.pref_width = w->width;
-				w->window_desc.pref_height = w->height;
+				if (click_count > 1) {
+					w->window_desc.pref_width = 0;
+					w->window_desc.pref_height = 0;
+				} else {
+					w->window_desc.pref_width = w->width;
+					w->window_desc.pref_height = w->height;
+				}
 			} else {
 				int16_t def_width = std::max<int16_t>(std::min<int16_t>(w->window_desc.GetDefaultWidth(), _screen.width), w->nested_root->smallest_x);
 				int16_t def_height = std::max<int16_t>(std::min<int16_t>(w->window_desc.GetDefaultHeight(), _screen.height - 50), w->nested_root->smallest_y);
@@ -985,7 +990,7 @@ void Window::ReInit(int rx, int ry, bool reposition)
 	if (reposition) {
 		Point pt = this->OnInitialPosition(this->nested_root->smallest_x, this->nested_root->smallest_y, window_number);
 		this->InitializePositionSize(pt.x, pt.y, this->nested_root->smallest_x, this->nested_root->smallest_y);
-		this->FindWindowPlacementAndResize(this->window_desc.GetDefaultWidth(), this->window_desc.GetDefaultHeight());
+		this->FindWindowPlacementAndResize(this->window_desc.GetDefaultWidth(), this->window_desc.GetDefaultHeight(), false);
 	}
 
 	ResizeWindow(this, dx, dy, true, false);
@@ -1418,39 +1423,42 @@ void Window::InitializePositionSize(int x, int y, int sm_width, int sm_height)
  * done here.
  * @param def_width default width in pixels of the window
  * @param def_height default height in pixels of the window
+ * @param allow_resize Set if resizing is permitted.
  * @see Window::Window(), Window::InitializeData(), Window::InitializePositionSize()
  */
-void Window::FindWindowPlacementAndResize(int def_width, int def_height)
+void Window::FindWindowPlacementAndResize(int def_width, int def_height, bool allow_resize)
 {
-	def_width  = std::max(def_width,  this->width); // Don't allow default size to be smaller than smallest size
-	def_height = std::max(def_height, this->height);
-	/* Try to make windows smaller when our window is too small.
-	 * w->(width|height) is normally the same as min_(width|height),
-	 * but this way the GUIs can be made a little more dynamic;
-	 * one can use the same spec for multiple windows and those
-	 * can then determine the real minimum size of the window. */
-	if (this->width != def_width || this->height != def_height) {
-		/* Think about the overlapping toolbars when determining the minimum window size */
-		int free_height = _screen.height;
-		const Window *wt = FindWindowById(WC_STATUS_BAR, 0);
-		if (wt != nullptr) free_height -= wt->height;
-		wt = FindWindowById(WC_MAIN_TOOLBAR, 0);
-		if (wt != nullptr) free_height -= wt->height;
+	if (allow_resize) {
+		def_width  = std::max(def_width,  this->width); // Don't allow default size to be smaller than smallest size
+		def_height = std::max(def_height, this->height);
+		/* Try to make windows smaller when our window is too small.
+		 * w->(width|height) is normally the same as min_(width|height),
+		 * but this way the GUIs can be made a little more dynamic;
+		 * one can use the same spec for multiple windows and those
+		 * can then determine the real minimum size of the window. */
+		if (this->width != def_width || this->height != def_height) {
+			/* Think about the overlapping toolbars when determining the minimum window size */
+			int free_height = _screen.height;
+			const Window *wt = FindWindowById(WC_STATUS_BAR, 0);
+			if (wt != nullptr) free_height -= wt->height;
+			wt = FindWindowById(WC_MAIN_TOOLBAR, 0);
+			if (wt != nullptr) free_height -= wt->height;
 
-		int enlarge_x = std::max(std::min(def_width  - this->width,  _screen.width - this->width),  0);
-		int enlarge_y = std::max(std::min(def_height - this->height, free_height   - this->height), 0);
+			int enlarge_x = std::max(std::min(def_width  - this->width,  _screen.width - this->width),  0);
+			int enlarge_y = std::max(std::min(def_height - this->height, free_height   - this->height), 0);
 
-		/* X and Y has to go by step.. calculate it.
-		 * The cast to int is necessary else x/y are implicitly casted to
-		 * unsigned int, which won't work. */
-		if (this->resize.step_width  > 1) enlarge_x -= enlarge_x % (int)this->resize.step_width;
-		if (this->resize.step_height > 1) enlarge_y -= enlarge_y % (int)this->resize.step_height;
+			/* X and Y has to go by step.. calculate it.
+			 * The cast to int is necessary else x/y are implicitly casted to
+			 * unsigned int, which won't work. */
+			if (this->resize.step_width  > 1) enlarge_x -= enlarge_x % (int)this->resize.step_width;
+			if (this->resize.step_height > 1) enlarge_y -= enlarge_y % (int)this->resize.step_height;
 
-		ResizeWindow(this, enlarge_x, enlarge_y, true, false);
-		/* ResizeWindow() calls this->OnResize(). */
-	} else {
-		/* Always call OnResize; that way the scrollbars and matrices get initialized. */
-		this->OnResize();
+			ResizeWindow(this, enlarge_x, enlarge_y, true, false);
+			/* ResizeWindow() calls this->OnResize(). */
+		} else {
+			/* Always call OnResize; that way the scrollbars and matrices get initialized. */
+			this->OnResize();
+		}
 	}
 
 	int nx = this->left;
@@ -1739,7 +1747,7 @@ void Window::FinishInitNested(WindowNumber window_number)
 	this->ApplyDefaults();
 	Point pt = this->OnInitialPosition(this->nested_root->smallest_x, this->nested_root->smallest_y, window_number);
 	this->InitializePositionSize(pt.x, pt.y, this->nested_root->smallest_x, this->nested_root->smallest_y);
-	this->FindWindowPlacementAndResize(this->window_desc.GetDefaultWidth(), this->window_desc.GetDefaultHeight());
+	this->FindWindowPlacementAndResize(this->window_desc.GetDefaultWidth(), this->window_desc.GetDefaultHeight(), true);
 }
 
 /**
@@ -1837,7 +1845,7 @@ static void DecreaseWindowCounters()
 				if (nwid->type == NWID_HSCROLLBAR || nwid->type == NWID_VSCROLLBAR) {
 					NWidgetScrollbar *sb = static_cast<NWidgetScrollbar*>(nwid);
 					if (sb->disp_flags.Any({NWidgetDisplayFlag::ScrollbarUp, NWidgetDisplayFlag::ScrollbarDown})) {
-						sb->disp_flags.Reset(NWidgetDisplayFlag::ScrollbarUp).Reset(NWidgetDisplayFlag::ScrollbarDown);
+						sb->disp_flags.Reset({NWidgetDisplayFlag::ScrollbarUp, NWidgetDisplayFlag::ScrollbarDown});
 						w->mouse_capture_widget = -1;
 						sb->SetDirty(w);
 					}
@@ -2315,7 +2323,7 @@ static void HandleScrollbarScrolling(Window *w)
 	int range = sb->GetCount() - sb->GetCapacity();
 	if (range <= 0) return;
 
-	int pos = RoundDivSU((i + _scrollbar_start_pos) * range, _scrollbar_size);
+	int pos = RoundDivSU((i + _scrollbar_start_pos) * range, std::max(1, _scrollbar_size));
 	if (rtl) pos = range - pos;
 	if (sb->SetPosition(pos)) w->SetDirty();
 }
@@ -2532,7 +2540,7 @@ EventState Window::HandleEditBoxKey(WidgetID wid, char32_t key, uint16_t keycode
 			break;
 
 		case QueryString::ACTION_CLEAR:
-			if (StrEmpty(query->text.GetText())) {
+			if (query->text.GetText().empty()) {
 				/* If already empty, unfocus instead */
 				this->UnfocusFocusedWidget();
 			} else {
@@ -2639,7 +2647,7 @@ void HandleCtrlChanged()
  * @param wid Edit box widget.
  * @param str Text string to insert.
  */
-/* virtual */ void Window::InsertTextString(WidgetID wid, const char *str, bool marked, const char *caret, const char *insert_location, const char *replacement_end)
+/* virtual */ void Window::InsertTextString(WidgetID wid, std::string_view str, bool marked, std::optional<size_t> caret, std::optional<size_t> insert_location, std::optional<size_t> replacement_end)
 {
 	QueryString *query = this->GetQueryString(wid);
 	if (query == nullptr) return;
@@ -2656,7 +2664,7 @@ void HandleCtrlChanged()
  * @param marked Is the input a marked composition string from an IME?
  * @param caret Move the caret to this point in the insertion string.
  */
-void HandleTextInput(const char *str, bool marked, const char *caret, const char *insert_location, const char *replacement_end)
+void HandleTextInput(std::string_view str, bool marked, std::optional<size_t> caret, std::optional<size_t> insert_location, std::optional<size_t> replacement_end)
 {
 	if (!EditBoxInGlobalFocus()) return;
 

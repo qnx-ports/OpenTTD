@@ -285,7 +285,7 @@ STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Stäng f
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}Fönstertitel - dra för att flytta fönstret
 STR_TOOLTIP_SHADE                                               :{BLACK}Dölj fönster - Visa bara namnlisten
 STR_TOOLTIP_DEBUG                                               :{BLACK}Visa NewGRF felsökningsinformation
-STR_TOOLTIP_DEFSIZE                                             :{BLACK}Återställ fönstret till standardstorlek. Ctrl+Klick för att sätta nuvarande storlek som ny standard
+STR_TOOLTIP_DEFSIZE                                             :{BLACK}Återställ fönstret till standardstorlek. Ctrl+Klick för att sätta nuvarande storlek som ny standard. Dubbelklicka Ctrl+Klick för att återställa till sparad standard
 STR_TOOLTIP_STICKY                                              :{BLACK}Markera att fönstret ska lämnas öppet när 'Stäng alla fönster'-knappen används. Ctrl+klick för att spara som standardinställning
 STR_TOOLTIP_RESIZE                                              :{BLACK}Klicka och dra för att förstora fönstret
 STR_TOOLTIP_TOGGLE_LARGE_SMALL_WINDOW                           :{BLACK}Växla stor/liten fönsterstorlek
@@ -349,7 +349,7 @@ STR_SORT_BY_WAITING_TOTAL                                       :Väntande gods 
 STR_SORT_BY_WAITING_AVAILABLE                                   :Väntande gods tillgängligt
 STR_SORT_BY_RATING_MAX                                          :Högsta godsvärdering
 STR_SORT_BY_RATING_MIN                                          :Lägsta godsvärdering
-STR_SORT_BY_ENGINE_ID                                           :MotorID (klassisk sortering)
+STR_SORT_BY_ENGINE_ID                                           :FordonsID (klassisk sortering)
 STR_SORT_BY_COST                                                :Kostnad
 STR_SORT_BY_POWER                                               :Kraft
 STR_SORT_BY_TRACTIVE_EFFORT                                     :Dragkraft
@@ -443,19 +443,20 @@ STR_SCENEDIT_TOWN_MENU_BUILD_TOWN                               :Generera städe
 STR_SCENEDIT_TOWN_MENU_PACE_HOUSE                               :Placera ut hus
 
 # Settings menu
-STR_SETTINGS_MENU_GAME_OPTIONS                                  :Spelinställningar
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Inställningar
-STR_SETTINGS_MENU_AI_SETTINGS                                   :Inställningar för AI
+STR_SETTINGS_MENU_GAME_OPTIONS                                  :Spelalternativ
+STR_SETTINGS_MENU_AI_SETTINGS                                   :AI-inställningar
 STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS                           :Spelskriptinställningar
-STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Inställningar för NewGRF
-STR_SETTINGS_MENU_SANDBOX_OPTIONS                               :Sandbox-inställningar
-STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Inställningar för genomskinlighet
+STR_SETTINGS_MENU_NEWGRF_SETTINGS                               : NewGRF-inställningar
+STR_SETTINGS_MENU_SANDBOX_OPTIONS                               :Sandlådealternativ
+STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS                          :Genomskinlighetsalternativ
 STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED                          :Stadsnamn visas
 STR_SETTINGS_MENU_STATION_NAMES_DISPLAYED                       :Stationsnamn visas
 STR_SETTINGS_MENU_STATION_NAMES_TRAIN                           :Tågstationer
+STR_SETTINGS_MENU_STATION_NAMES_LORRY                           :Lastbilshållplatser
 STR_SETTINGS_MENU_STATION_NAMES_BUS                             :Busshållplatser
 STR_SETTINGS_MENU_STATION_NAMES_SHIP                            :Hamnar
 STR_SETTINGS_MENU_STATION_NAMES_PLANE                           :Flygplatser
+STR_SETTINGS_MENU_STATION_NAMES_GHOST                           :Spökstationer
 STR_SETTINGS_MENU_WAYPOINTS_DISPLAYED                           :Riktmärken visas
 STR_SETTINGS_MENU_SIGNS_DISPLAYED                               :Skyltar visas
 STR_SETTINGS_MENU_SHOW_COMPETITOR_SIGNS                         :Motståndarnas skyltar och namn visas
@@ -931,8 +932,8 @@ STR_NEWS_SHOW_VEHICLE_GROUP_TOOLTIP                             :{BLACK}Öppna g
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_LIST                   :{WHITE}{STATION} accepterar inte längre: {CARGO_LIST}
 STR_NEWS_STATION_NOW_ACCEPTS_CARGO_LIST                         :{WHITE}{STATION} accepterar nu: {CARGO_LIST}
 
-STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}Subventionen har gått ut:{}{}{STRING} från {STRING} till {STRING} är inte längre subventionerad
-STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}Subventionen gäller inte längre:{}{}{STRING} från {STRING} till {STRING} är inte längre subventionerad
+STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}Erbjudanden subvention har gått ut:{}{}{STRING} från {STRING} till {STRING} kommer nu inte attrahera en subvention
+STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}Subventionen återkallad:{}{}{STRING} från {STRING} till {STRING} är inte längre subventionerad
 STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}Subvention erbjuden:{}{}Första {STRING} från {STRING} till {STRING} kommer tilldelas en {UNITS_YEARS_OR_MINUTES}s subvention från de lokala myndigheterna!
 ###length 4
 STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}Subvention tilldelad {STRING}!{}{}{STRING} från {STRING} till {STRING} kommer ge 50% extra utdelning nästkommande {UNITS_YEARS_OR_MINUTES}!
@@ -954,25 +955,29 @@ STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW                                :{BLACK}Byt huvu
 STR_EXTRA_VIEW_MOVE_MAIN_TO_VIEW_TOOLTIP                        :{BLACK}Kopiera denna vys position till huvudvyn
 
 # Game options window
-STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Spelinställningar
+STR_GAME_OPTIONS_CAPTION                                        :{WHITE}Spelalternativ
 
 STR_GAME_OPTIONS_TAB_GENERAL                                    :Allmänt
-STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :{BLACK}Välj generella inställningar
+STR_GAME_OPTIONS_TAB_GENERAL_TOOLTIP                            :Välj generella inställningar
 STR_GAME_OPTIONS_TAB_GRAPHICS                                   :Grafik
-STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :{BLACK}Välj grafikinställningar
+STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :Välj grafikinställningar
 STR_GAME_OPTIONS_TAB_SOUND                                      :Ljud
-STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :{BLACK}Välj ljud- och musikinställningar
+STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :Välj ljud- och musikinställningar
 STR_GAME_OPTIONS_TAB_SOCIAL                                     :Socialt
-STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :{BLACK}Välj inställningar för social integration
+STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :Välj socialintegrationsinställningar
+STR_GAME_OPTIONS_TAB_ADVANCED                                   :Avancerade
+STR_GAME_OPTIONS_TAB_ADVANCED_TOOLTIP                           :Ändra avancerade inställningar
 
 STR_GAME_OPTIONS_VOLUME                                         :Volym
 STR_GAME_OPTIONS_SFX_VOLUME                                     :Ljudeffekter
 STR_GAME_OPTIONS_MUSIC_VOLUME                                   :Musik
 
+STR_GAME_OPTIONS_SETTING                                        :{STRING}: {ORANGE}{STRING}
+
 STR_GAME_OPTIONS_VOLUME_MARK                                    :{NUM}%
 
-STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Valutaenheter
-STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Välj valutaenhet
+STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :Valutaenheter
+STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :Välj valutaenhet
 
 STR_GAME_OPTIONS_CURRENCY_CODE                                  :{STRING} ({STRING})
 
@@ -1023,8 +1028,8 @@ STR_GAME_OPTIONS_CURRENCY_LVL                                   :Lettiska Lats
 STR_GAME_OPTIONS_CURRENCY_PTE                                   :Portugisisk escudo
 STR_GAME_OPTIONS_CURRENCY_UAH                                   :Ukrainsk hryvnia
 
-STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :{BLACK}Spara automatiskt
-STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :{BLACK}Välj intervall mellan automatiskt sparande
+STR_GAME_OPTIONS_AUTOSAVE_FRAME                                 :Autospara
+STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_TOOLTIP                      :Välj intervall för automatiskt sparande av spelet
 
 # Autosave dropdown
 ###length 5
@@ -1034,75 +1039,77 @@ STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_30_MINUTES             :Var 30:e minut
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_60_MINUTES             :Var 60:e minut
 STR_GAME_OPTIONS_AUTOSAVE_DROPDOWN_EVERY_120_MINUTES            :Var 120:e minut
 
-STR_GAME_OPTIONS_LANGUAGE                                       :{BLACK}Språk
-STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :{BLACK}Välj vilket språk som ska användas
+STR_GAME_OPTIONS_LANGUAGE                                       :Språk
+STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :Välj vilket språk som ska användas i gränssnittet.
 STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING} ({NUM}% färdigt)
 
-STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Helskärm
-STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}Kryssa i den här rutan för att spela OpenTTD i helskärmsläge
+STR_GAME_OPTIONS_FULLSCREEN                                     :Helskärm
+STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :Kryssa i den här rutan för att spela OpenTTD i helskärmsläge
 
-STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Skärmupplösning
-STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}Välj vilken skärmupplösning som ska användas
+STR_GAME_OPTIONS_RESOLUTION                                     :Skärmupplösning
+STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :Välj vilken skärmupplösning som ska användas
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :annan
 STR_GAME_OPTIONS_RESOLUTION_ITEM                                :{NUM}x{NUM}
 
-STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :{BLACK}Hårdvaruacceleration
-STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :{BLACK}Markera denna rutan för att tillåta OpenTTD att försöka använda hårdvaruacceleration. Ändrad inställning kommer bara att gälla efter omstart.
+STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :Hårdvaruacceleration
+STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :Markera denna rutan för att tillåta OpenTTD att försöka använda hårdvaruacceleration. Ändrad inställning kommer bara att gälla efter omstart.
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Inställningen kommer bara att gälla efter omstart av spelet
 
-STR_GAME_OPTIONS_VIDEO_VSYNC                                    :{BLACK}VSync
-STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Markera den här rutan för att v-synka skärmen. Ändringar i den här inställningen kommer bara att tillämpas vid omstart av spelet. Fungerar bara med hårdvaruacceleration aktiverad.
+STR_GAME_OPTIONS_VIDEO_VSYNC                                    :VSync
+STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :Markera den här rutan för att v-synka skärmen. Ändringar i den här inställningen kommer bara att tillämpas vid omstart av spelet. Fungerar bara med hårdvaruacceleration aktiverad.
 
-STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :{BLACK}Nuvarande drivrutin: {STRING}
+STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :Nuvarande drivrutin: {STRING}
 
-STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :{BLACK}Gränssnittets storlek
-STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :{BLACK}Dra i reglaget för att ställa in gränssnittets storlek. Ctrl+Drag för steglös justering
-STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :{BLACK}Känn av storleken automatiskt
-STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :{BLACK}Kryssa i den här rutan för automatisk inställning av gränssnittets storlek
+STR_GAME_OPTIONS_INTERFACE                                      :Gränssnitt
 
-STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :{BLACK}Skala bården
-STR_GAME_OPTIONS_GUI_SCALE_BEVELS_TOOLTIP                       :{BLACK}Kryssa i den här rutan för att skala bården efter gränssnittets storlek
+STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :Gränssnittets storlek
+STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :Dra i reglaget för att ställa in gränssnittets storlek. Ctrl+Drag för steglös justering
+STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :Känn av storleken automatiskt
+STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :Kryssa i den här rutan för automatisk inställning av gränssnittets storlek
 
-STR_GAME_OPTIONS_GUI_FONT_SPRITE                                :{BLACK}Använd traditionellt sprite-typsnitt
-STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :{BLACK}Kryssa i den här rutan om du föredrar att använda det traditionella sprite-typsnittet med fast storlek
-STR_GAME_OPTIONS_GUI_FONT_AA                                    :{BLACK}Anti-alias-typsnitt
-STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :{BLACK}Kryssa i den här rutan för anti-aliasing av typsnitt med justerbar storlek
+STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :Skala bården
+STR_GAME_OPTIONS_GUI_SCALE_BEVELS_TOOLTIP                       :Kryssa i den här rutan för att skala bården efter gränssnittets storlek
+
+STR_GAME_OPTIONS_GUI_FONT_SPRITE                                :Använd traditionellt sprite-typsnitt
+STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :Kryssa i den här rutan om du föredrar att använda det traditionella sprite-typsnittet med fast storlek
+STR_GAME_OPTIONS_GUI_FONT_AA                                    :Anti-alias-typsnitt
+STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :Kryssa i den här rutan för anti-aliasing av typsnitt med justerbar storlek
 
 STR_GAME_OPTIONS_GUI_SCALE_MARK                                 :{DECIMAL}x
 
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :{BLACK}Automatisk undersökning
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :{BLACK}Delta i en automatisk undersökning
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :{BLACK}Om aktiverat, kommer OpenTTD att skicka en enkät när du lämnar ett spel
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :{BLACK}Om undersökning och integritet
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :{BLACK}Detta öppnar en länk i webbläsaren med mer information om den automatiska undersökningen.
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :{BLACK}Förhandsgranska enkätresultat
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :{BLACK}Visa enkätresultatet från det nu pågående spelet
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :Automatisk undersökning
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :Delta i en automatisk undersökning
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :Om aktiverat, kommer OpenTTD att skicka en enkät när du lämnar ett spel
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :Om undersökning och integritet
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :Detta öppnar en länk i webbläsaren med mer information om den automatiska undersökningen.
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :Förhandsgranska enkätresultat
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :Visa enkätresultatet från det nu pågående spelet
 
-STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}Grafik
+STR_GAME_OPTIONS_DISPLAY                                        :Skärm
 
-STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK}Visa uppdateringsfrekvens
-STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :{BLACK}Välj skärmens uppdateringsfrekvens
+STR_GAME_OPTIONS_REFRESH_RATE                                   :Visa uppdateringsfrekvens
+STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :Välj skärmens uppdateringsfrekvens
 STR_GAME_OPTIONS_REFRESH_RATE_ITEM                              :{NUM}Hz
 STR_GAME_OPTIONS_REFRESH_RATE_WARNING                           :{WHITE}uppdateringsfrekvenser högre än 60Hz kan påverka prestandan.
 
-STR_GAME_OPTIONS_BASE_GRF                                       :{BLACK}Grafikpaket som standard
-STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :{BLACK}Välj vilket grafikpaket som ska användas som standard (kan ej ändras under spel, utan endast från huvudmenyn)
-STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :{BLACK}Ytterligare information om basgrafik-settet
+STR_GAME_OPTIONS_BASE_GRF                                       :Grundgrafikpaket
+STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :Välj vilket grafikpaket som ska användas som standard (kan ej ändras under spel, utan endast från huvudmenyn)
+STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :Ytterligare information om grafikpaketet
 
-STR_GAME_OPTIONS_BASE_SFX                                       :{BLACK}Grundljudspaket
-STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :{BLACK}Välj vilket grundljudspaket som ska användas (kan inte ändras under spel, utan endast från huvudmenyn)
-STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :{BLACK}Ytterligare information om grundljudpaketet
+STR_GAME_OPTIONS_BASE_SFX                                       :Grundljudpaket
+STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :Välj vilket ljudpaket som ska användas (kan inte ändras under spel, utan endast från huvudmenyn)
+STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :Ytterligare information om ljudpaketet
 
-STR_GAME_OPTIONS_BASE_MUSIC                                     :{BLACK}Musikpaket valt
-STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :{BLACK}Välj vilket musikpaket som ska användas
-STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :{BLACK}Yttligare information om musikpaketet
+STR_GAME_OPTIONS_BASE_MUSIC                                     :Grundmusikpaket
+STR_GAME_OPTIONS_BASE_MUSIC_TOOLTIP                             :Välj vilket musikpaket som ska användas
+STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :Ytterligare information om musikpaketet
 
 STR_GAME_OPTIONS_ONLINE_CONTENT                                 :Hämta innehåll
 STR_GAME_OPTIONS_ONLINE_CONTENT_TOOLTIP                         :Kontrollera om det finns nytt och uppdaterat innehåll att ladda ned
 
-STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :{LTBLUE}(inga tillägg för att integrera med sociala plattformar installerade)
+STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :(inga tillägg för att integrera med sociala plattformar installerade)
 
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{BLACK}{STRING} ({STRING})
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{STRING} ({STRING})
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_PLATFORM                         :Plattform:
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :Tilläggsstatus:
 
@@ -1217,12 +1224,11 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :Tillåtande (in
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Ingen passande datorspelare finns tillgänglig...{}{}Du kan ladda ner ett flertal datorspelare via systemet för 'online-innehåll'
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Inställningar
-STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Sökfilter:
-STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Utöka alla
-STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Stäng alla
-STR_CONFIG_SETTING_RESET_ALL                                    :{BLACK}Återställ alla värden
+# Settings tree in the Game Options window
+STR_CONFIG_SETTING_FILTER_TITLE                                 :Sökfilter:
+STR_CONFIG_SETTING_EXPAND_ALL                                   :Utöka alla
+STR_CONFIG_SETTING_COLLAPSE_ALL                                 :Stäng alla
+STR_CONFIG_SETTING_RESET_ALL                                    :Återställ alla värden
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(ingen förklaring tillgänglig)
 STR_CONFIG_SETTING_VALUE                                        :{PUSH_COLOUR}{ORANGE}{STRING}{POP_COLOUR}
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Standardvärde: {ORANGE}{STRING}
@@ -1235,9 +1241,9 @@ STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Företagsinstä
 STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_CAPTION        :{WHITE}Varning!
 STR_CONFIG_SETTING_RESET_ALL_CONFIRMATION_DIALOG_TEXT           :{WHITE}Detta kommer att återställa alla spelinställningar till deras standardvärden.{}Är du säker på att du vill fortsätta?
 
-STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategori:
-STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Typ:
-STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Begränsar listan nedan med fördefinierade filter
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :Kategori:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :Typ:
+STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :Begränsar listan nedan med fördefinierade filter
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Grundläggande (visa endast viktiga inställningar)
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Avancerat (visa de flesta inställningarna)
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :Expert (visa alla inställningar, inklusive de konstiga)
@@ -1254,9 +1260,9 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Företagsinstä
 
 STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Inga -
 ###length 3
-STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Visa alla sökresultat genom att sätta{}{SILVER}Kategori {BLACK}till {WHITE}{STRING}
-STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Visa alla sökresultat genom att sätta{}{SILVER}Typ {BLACK}till {WHITE}Alla typer av inställningar
-STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Visa alla sökresultat genom att sätta{}{SILVER}Kategori {BLACK}till {WHITE}{STRING} {BLACK}och {SILVER}Typ {BLACK}till {WHITE}Alla typer av inställningar
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :Visa alla sökresultat genom att sätta{}{PUSH_COLOUR}{SILVER}Kategori {POP_COLOUR}till {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :Visa alla sökresultat genom att sätta{}{PUSH_COLOUR}{SILVER}Typ {POP_COLOUR}till {WHITE}Alla typer av inställningar
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :Visa alla sökresultat genom att sätta{}{PUSH_COLOUR}{SILVER}Kategori {POP_COLOUR}till {PUSH_COLOUR}{WHITE}{STRING} {POP_COLOUR}och {PUSH_COLOUR}{SILVER}Typ {POP_COLOUR}till {WHITE}Alla typer av inställningar
 
 ###length 3
 STR_CONFIG_SETTING_OFF                                          :Av
@@ -2018,7 +2024,7 @@ STR_CONFIG_SETTING_SOFT_LIMIT                                   :Maximalt antal 
 STR_CONFIG_SETTING_SOFT_LIMIT_HELPTEXT                          :Antal icke-klistrade fönster som kan vara öppna innan gamla fönster börjar stängas automatiskt för att ge plats åt nya
 STR_CONFIG_SETTING_SOFT_LIMIT_VALUE                             :{COMMA}
 ###setting-zero-is-special
-STR_CONFIG_SETTING_SOFT_LIMIT_DISABLED                          :avstängd
+STR_CONFIG_SETTING_SOFT_LIMIT_DISABLED                          :Avstängd
 
 STR_CONFIG_SETTING_ZOOM_MIN                                     :Maximal inzoomning: {STRING}
 STR_CONFIG_SETTING_ZOOM_MIN_HELPTEXT                            :Den maximala inzoomningsnivån för vyer. Tänk på att högre möjliga inzoomningsnivåer kräver högre minneskapacitet
@@ -2177,9 +2183,9 @@ STR_CONFIG_ERROR_INVALID_GRF_INCOMPATIBLE                       :inkompatibel me
 STR_CONFIG_ERROR_INVALID_GRF_UNKNOWN                            :okänd
 STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_LEVEL             :{WHITE}... kompressionsnivån '{STRING}' är inte giltig
 STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :{WHITE}... filformatet '{STRING}' är inte tillgängligt. Återgår till '{STRING}'
-STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND                :{WHITE}... ignorerar grafikpaketet '{STRING}': hittades ej
+STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND                :{WHITE}... ignorerar grundgrafikpaketet '{STRING}': hittades ej
 STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :{WHITE}... ignorerar grundljudpaketet '{STRING}': hittades ej
-STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}... ignorerar musikpaket '{STRING}': hittades ej
+STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :{WHITE}... ignorerar grundmusikpaket '{STRING}': hittades ej
 STR_CONFIG_ERROR_OUT_OF_MEMORY                                  :{WHITE}Slut på minne
 STR_CONFIG_ERROR_SPRITECACHE_TOO_BIG                            :{WHITE}Allokerandet av {BYTES} till spritecachen misslyckades. Spritecachen begränsades till {BYTES}. Detta kommer att begränsa OpenTTD:s prestanda. För att minska minneskraven kan du försöka att inaktivera 32bpp-grafik och/eller antalet inzoomningsnivåer
 
@@ -2198,10 +2204,9 @@ STR_INTRO_PLAY_HEIGHTMAP                                        :{BLACK}Spela h�
 STR_INTRO_SCENARIO_EDITOR                                       :{BLACK}Scenarioeditor
 STR_INTRO_MULTIPLAYER                                           :{BLACK}Flera spelare
 
-STR_INTRO_GAME_OPTIONS                                          :{BLACK}Spelinställningar
+STR_INTRO_GAME_OPTIONS                                          :{BLACK}Spelalternativ
 STR_INTRO_HIGHSCORE                                             :{BLACK}Bästa spelresultat
 STR_INTRO_HELP                                                  :Hjälp & Manualer
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Inställningar
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}NewGRF-inställningar
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Online-innehåll
 STR_INTRO_AI_SETTINGS                                           :{BLACK}AI-inställningar
@@ -2220,17 +2225,16 @@ STR_INTRO_TOOLTIP_SUB_ARCTIC_LANDSCAPE                          :{BLACK}Välj 's
 STR_INTRO_TOOLTIP_SUB_TROPICAL_LANDSCAPE                        :{BLACK}Välj 'sub-tropiskt' som typ av landskap
 STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Välj 'leksaksland' som typ av landskap
 
-STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Öppna spelinställningar
+STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Öppna spelalternativ
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Öppna topplistan över de bästa spelresultaten
 STR_INTRO_TOOLTIP_HELP                                          :{BLACK}Inhämta dokumentation och onlineresurser
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Öppna inställningar
-STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Öppna inställningar för NewGRF
+STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Öppna NewGRF-inställningar
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Kolla efter nytt och nyuppdaterat innehåll för nedladdning
-STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}Öppna inställningar för AI
-STR_INTRO_TOOLTIP_GAMESCRIPT_SETTINGS                           :{BLACK}Öppna inställningar för spelskript
+STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}Öppna AI-inställningar
+STR_INTRO_TOOLTIP_GAMESCRIPT_SETTINGS                           :{BLACK}Öppna spelskriptinställningar
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}Avsluta 'OpenTTD'
 
-STR_INTRO_BASESET                                               :{BLACK}Det grafikpaket som för närvarande är valt som standard saknar {NUM} sprite{P "" s}. Vänligen kontrollera om det finns en uppdatering till paketet.
+STR_INTRO_BASESET                                               :{BLACK}Det nuvarande valda grundgrafikpaketet saknar {NUM} sprite{P "" s}. Vänligen kontrollera om det finns en uppdatering till paketet.
 STR_INTRO_TRANSLATION                                           :{BLACK}Den här översättningen saknar {NUM} sträng{P "" ar}. Hjälp gärna till att förbättra OpenTTD genom att bli översättare. Se readme.txt för mer info.
 
 # Quit window
@@ -2259,7 +2263,7 @@ STR_HELP_WINDOW_BUGTRACKER                                      :{BLACK}Rapporte
 STR_HELP_WINDOW_COMMUNITY                                       :{BLACK}Gemenskap
 
 # Cheat window
-STR_CHEATS                                                      :{WHITE}Sandbox-inställningar
+STR_CHEATS                                                      :{WHITE}Sandlådealternativ
 STR_CHEAT_MONEY                                                 :{LTBLUE}Öka pengar med {CURRENCY_LONG}
 STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}Spelar som företag:: {ORANGE}{COMMA}
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}Magisk bulldozer (ta bort industrier, oflyttbara objekt etc.): {ORANGE}{STRING}
@@ -2736,7 +2740,7 @@ STR_MISSING_GRAPHICS_ERROR                                      :{BLACK}Nedladdn
 STR_MISSING_GRAPHICS_ERROR_QUIT                                 :{BLACK}Avsluta OpenTTD
 
 # Transparency settings window
-STR_TRANSPARENCY_CAPTION                                        :{WHITE}Genomskinlighetsinställningar
+STR_TRANSPARENCY_CAPTION                                        :{WHITE}Genomskinlighetsalternativ
 STR_TRANSPARENT_SIGNS_TOOLTIP                                   :{BLACK}Växla genomskinlighet för skyltar. Ctrl+klick för att låsa
 STR_TRANSPARENT_TREES_TOOLTIP                                   :{BLACK}Växla genomskinlighet för träd. Ctrl+klick för att låsa
 STR_TRANSPARENT_HOUSES_TOOLTIP                                  :{BLACK}Växla genomskinlighet för byggnader. Ctrl+klick för att låsa
@@ -2856,6 +2860,7 @@ STR_HOUSE_PICKER_YEARS_FROM                                     :{BLACK}År: {OR
 STR_HOUSE_PICKER_YEARS_UNTIL                                    :{BLACK}År: {ORANGE}Till {NUM}
 STR_HOUSE_PICKER_SIZE                                           :{BLACK}Storlek: {ORANGE}{NUM}x{NUM} rutor
 STR_HOUSE_PICKER_CARGO_ACCEPTED                                 :{BLACK}Accepterat gods: {ORANGE}
+STR_HOUSE_PICKER_CARGO_PRODUCED                                 :{BLACK}Fraktgods producerat: {ORANGE}{CARGO_LIST}
 
 STR_HOUSE_PICKER_CLASS_ZONE1                                    :Gräns
 STR_HOUSE_PICKER_CLASS_ZONE2                                    :Utkanter
@@ -3155,6 +3160,7 @@ STR_LAI_CLEAR_DESCRIPTION_GRASS                                 :Gräs
 STR_LAI_CLEAR_DESCRIPTION_FIELDS                                :Fält
 STR_LAI_CLEAR_DESCRIPTION_DESERT                                :Öken
 STR_LAI_CLEAR_DESCRIPTION_SNOWY_ROCKS                           :Snötäckta stenblock
+STR_LAI_CLEAR_DESCRIPTION_SNOWY_ROUGH_LAND                      :Snötäckt ojämn mark
 STR_LAI_CLEAR_DESCRIPTION_SNOWY_GRASS                           :Snötäckt gräs
 
 STR_LAI_RAIL_DESCRIPTION_TRACK                                  :Järnvägsspår
@@ -3369,11 +3375,11 @@ STR_MAPGEN_VARIETY                                              :{BLACK}Varierad
 STR_MAPGEN_GENERATE                                             :{WHITE}Generera
 STR_MAPGEN_GENERATE_TOOLTIP                                     :{BLACK}Skapa världen och spela OpenTTD!
 STR_MAPGEN_NEWGRF_SETTINGS                                      :{BLACK}NewGRF-inställningar
-STR_MAPGEN_NEWGRF_SETTINGS_TOOLTIP                              :{BLACK}Öppna inställningar för NewGRF
-STR_MAPGEN_AI_SETTINGS                                          :{BLACK}Inställningar för AI
-STR_MAPGEN_AI_SETTINGS_TOOLTIP                                  :{BLACK}Öppna inställningar för AI
-STR_MAPGEN_GS_SETTINGS                                          :{BLACK}Inställningar för spelskript
-STR_MAPGEN_GS_SETTINGS_TOOLTIP                                  :{BLACK}Öppna inställningar för spelskript
+STR_MAPGEN_NEWGRF_SETTINGS_TOOLTIP                              :{BLACK}Öppna NewGRF-inställningar
+STR_MAPGEN_AI_SETTINGS                                          :{BLACK}AI-inställningar
+STR_MAPGEN_AI_SETTINGS_TOOLTIP                                  :{BLACK}Öppna AI-inställningar
+STR_MAPGEN_GS_SETTINGS                                          :{BLACK}SpelskriptInställningar
+STR_MAPGEN_GS_SETTINGS_TOOLTIP                                  :{BLACK}Öppna spelskriptinställningar
 
 ###length 21
 STR_MAPGEN_TOWN_NAME_ORIGINAL_ENGLISH                           :Engelska (Original)
@@ -3527,7 +3533,7 @@ STR_SAVE_PRESET_SAVE                                            :{BLACK}Spara
 STR_SAVE_PRESET_SAVE_TOOLTIP                                    :{BLACK}Spara den inställda till den nuvarande valda namnet
 
 # NewGRF parameters window
-STR_BASEGRF_PARAMETERS_CAPTION                                  :{WHITE}Ändra parametrar för standardgrafiken
+STR_BASEGRF_PARAMETERS_CAPTION                                  :{WHITE}Ändra parametrar för grafikpaketet
 STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}Ändra NewGRF-parametrar
 STR_NEWGRF_PARAMETERS_CLOSE                                     :{BLACK}Stäng
 STR_NEWGRF_PARAMETERS_RESET                                     :{BLACK}Återställ
@@ -3628,16 +3634,16 @@ STR_NEWGRF_LIST_MISSING                                         :{RED}Saknade fi
 
 # NewGRF 'it's broken' warnings
 STR_NEWGRF_BROKEN                                               :{WHITE}Beteendet hos NewGRF:en '{PUSH_COLOUR}{0:STRING}{POP_COLOUR}' kommer troligen orsaka desynkronisering och/eller krascher
-STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}Power wagon-tillstånd för '{1:ENGINE}' ändrades utanför en depå
-STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}Fordonslängd för '{1:ENGINE}' ändrades utanför en depå
-STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}Kapaciteten ändrades för '{1:ENGINE}' utan att vara i depå eller anpassning
+STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}Kraftförsörjning-vagn-tillstånd för '{PUSH_COLOUR}{1:ENGINE}{POP_COLOUR}' ändrades utanför en depå
+STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}Fordonslängd för '{PUSH_COLOUR}{1:ENGINE}{POP_COLOUR}' ändrades utanför en depå
+STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}Kapaciteten ändrades för '{PUSH_COLOUR}{1:ENGINE}{POP_COLOUR}' utan att vara i depå eller anpassning
 STR_BROKEN_VEHICLE_LENGTH                                       :{WHITE}Tåget '{VEHICLE}' som tillhör '{COMPANY}' har ogiltig längd. Detta orsakas förmodligen av problem med en NewGRF. Spelet kan desynkroniseras eller krascha
 
 STR_NEWGRF_BUGGY                                                :{WHITE}NewGRF '{PUSH_COLOUR}{0:STRING}{POP_COLOUR}' ger felaktig information
-STR_NEWGRF_BUGGY_ARTICULATED_CARGO                              :{WHITE}Last-/återställningsinformationen för '{1:ENGINE}' skiljer sig från köplistan efter konstruktion. Detta kan leda till att automatisk förnyelse/uppgradering misslyckas med att anpassa fordonen/vagnarna korrekt
-STR_NEWGRF_BUGGY_ENDLESS_PRODUCTION_CALLBACK                    :{WHITE}'{1:STRING}' skapade en oändlig loop i en produktions-callback-funktion
+STR_NEWGRF_BUGGY_ARTICULATED_CARGO                              :{WHITE}Last-/återställningsinformationen för '{PUSH_COLOUR}{1:ENGINE}{POP_COLOUR}' skiljer sig från köplistan efter konstruktion. Detta kan leda till att automatisk förnyelse/uppgradering misslyckas med att anpassa fordonen/vagnarna korrekt
+STR_NEWGRF_BUGGY_ENDLESS_PRODUCTION_CALLBACK                    :{WHITE}'{PUSH_COLOUR}{1:STRING}{POP_COLOUR}' skapade en oändlig loop i produktions-callback-funktionen
 STR_NEWGRF_BUGGY_UNKNOWN_CALLBACK_RESULT                        :{WHITE}Callback-funktion {1:HEX} returnerade ett okänt/ogiltligt resultat {2:HEX}
-STR_NEWGRF_BUGGY_INVALID_CARGO_PRODUCTION_CALLBACK              :{WHITE}'{1:STRING}' returnerade ogiltig lasttyp i produktions-callback vid {2:HEX}
+STR_NEWGRF_BUGGY_INVALID_CARGO_PRODUCTION_CALLBACK              :{WHITE}'{PUSH_COLOUR}{1:STRING}{POP_COLOUR}' returnerade ogiltig lasttyp i produktions-callback vid {2:HEX}
 
 # 'User removed essential NewGRFs'-placeholders for stuff without specs
 STR_NEWGRF_INVALID_CARGO                                        :<invalid cargo>
@@ -4852,8 +4858,8 @@ STR_ERROR_AI_PLEASE_REPORT_CRASH                                :{WHITE}Ett av s
 STR_ERROR_AI_DEBUG_SERVER_ONLY                                  :{YELLOW}Felsökning av datorspelare / spelskript är bara tillgänglig för servern
 
 # AI configuration window
-STR_AI_CONFIG_CAPTION_AI                                        :{WHITE}Inställningar för AI
-STR_AI_CONFIG_CAPTION_GAMESCRIPT                                :{WHITE}Inställningar för spelskript
+STR_AI_CONFIG_CAPTION_AI                                        :{WHITE}AI-inställningar
+STR_AI_CONFIG_CAPTION_GAMESCRIPT                                :{WHITE}Spelskriptinställningar
 STR_AI_CONFIG_GAMELIST_TOOLTIP                                  :{BLACK}Spelskriptet som kommer att läsas in i nästa spel
 STR_AI_CONFIG_AILIST_TOOLTIP                                    :{BLACK}Datorspelare som kommer att läsas in i nästa spel
 STR_AI_CONFIG_HUMAN_PLAYER                                      :Mänsklig spelare
@@ -4964,7 +4970,7 @@ STR_GAME_SAVELOAD_NOT_AVAILABLE                                 :<not available>
 STR_WARNING_LOADGAME_REMOVED_TRAMS                              :{WHITE}Spelet sparades i en version som ej stöder spårvagn. Alla spårvagnar har tagits bort
 
 # Map generation messages
-STR_ERROR_COULD_NOT_CREATE_TOWN                                 :{WHITE}Generering av kartan avbruten...{}... ingen lämplig plats för någon stad
+STR_ERROR_COULD_NOT_CREATE_TOWN                                 :{WHITE}Generering av kartan avbruten...{}{}... inga lämpliga platser för någon stad
 STR_ERROR_NO_TOWN_IN_SCENARIO                                   :{WHITE}... det finns ingen stad i detta scenario
 
 STR_ERROR_PNGMAP                                                :{WHITE}Kan inte ladda landskap från PNG...
@@ -5055,7 +5061,7 @@ STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}... för
 STR_ERROR_TOO_MANY_TOWNS                                        :{WHITE}... för många städer
 STR_ERROR_NO_SPACE_FOR_TOWN                                     :{WHITE}... det finns ingen plats kvar på kartan
 STR_ERROR_ROAD_WORKS_IN_PROGRESS                                :{WHITE}Vägarbete pågår
-STR_ERROR_TOWN_CAN_T_DELETE                                     :{WHITE}Kan inte ta bort den här staden...{}En station eller depå refererar till staden eller så kan inte en stadsägd ruta tas bort.
+STR_ERROR_TOWN_CAN_T_DELETE                                     :{WHITE}Kan inte ta bort den här staden...{}{}En station eller depå refererar till staden eller så kan inte en stadsägd ruta tas bort.
 STR_ERROR_STATUE_NO_SUITABLE_PLACE                              :{WHITE}... det finns ingen lämplig plats för en staty i stadens centrum
 STR_ERROR_CAN_T_BUILD_HOUSE                                     :{WHITE}Kan inte bygga hus...
 
@@ -5335,6 +5341,10 @@ STR_ERROR_CAN_T_SELL_ALL_SHIP                                   :{WHITE}Kan inte
 STR_ERROR_CAN_T_SELL_ALL_AIRCRAFT                               :{WHITE}Kan inte sälja alla flygplan...
 
 ###length VEHICLE_TYPES
+STR_ERROR_CAN_T_AUTOREPLACE_TRAIN                               :{WHITE}Kan inte bytta ut järnvägsfordon...
+STR_ERROR_CAN_T_AUTOREPLACE_ROAD_VEHICLE                        :{WHITE}Kan inte bytta ut vägfordon...
+STR_ERROR_CAN_T_AUTOREPLACE_SHIP                                :{WHITE}Kan inte bytta ut skepp...
+STR_ERROR_CAN_T_AUTOREPLACE_AIRCRAFT                            :{WHITE}Kan inte byta ut flygplan...
 
 STR_ERROR_TOO_MANY_VEHICLES_IN_GAME                             :{WHITE}För många fordon i spelet
 STR_ERROR_CAN_T_CHANGE_SERVICING                                :{WHITE}Kan inte ändra service-intervall...

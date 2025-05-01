@@ -235,7 +235,7 @@ struct IntSettingDesc : SettingDesc {
 	void ChangeValue(const void *object, int32_t newvalue) const;
 	void MakeValueValidAndWrite(const void *object, int32_t value) const;
 
-	virtual size_t ParseValue(const char *str) const;
+	virtual int32_t ParseValue(std::string_view str) const;
 	std::string FormatValue(const void *object) const override;
 	void ParseValue(const IniItem *item, void *object) const override;
 	bool IsSameValue(const IniItem *item, void *object) const override;
@@ -258,16 +258,16 @@ struct BoolSettingDesc : IntSettingDesc {
 		IntSettingDesc(save, flags, startup, def ? 1 : 0, 0, 1, 0, str, str_help, str_val, cat,
 			pre_check, post_callback, get_title_cb, get_help_cb, get_value_params_cb, get_def_cb, nullptr) {}
 
-	static std::optional<bool> ParseSingleValue(const char *str);
+	static std::optional<bool> ParseSingleValue(std::string_view str);
 
 	bool IsBoolSetting() const override { return true; }
-	size_t ParseValue(const char *str) const override;
+	int32_t ParseValue(std::string_view str) const override;
 	std::string FormatValue(const void *object) const override;
 };
 
 /** One of many setting. */
 struct OneOfManySettingDesc : IntSettingDesc {
-	typedef size_t OnConvert(const char *value); ///< callback prototype for conversion error
+	typedef std::optional<uint32_t> OnConvert(std::string_view value); ///< callback prototype for conversion error
 
 	template <ConvertibleThroughBaseOrTo<int32_t> Tdef, ConvertibleThroughBaseOrTo<uint32_t> Tmax>
 	OneOfManySettingDesc(const SaveLoad &save, SettingFlags flags, bool startup, Tdef def,
@@ -284,10 +284,10 @@ struct OneOfManySettingDesc : IntSettingDesc {
 	std::vector<std::string> many; ///< possible values for this type
 	OnConvert *many_cnvt;          ///< callback procedure when loading value mechanism fails
 
-	static size_t ParseSingleValue(const char *str, size_t len, const std::vector<std::string> &many);
+	static std::optional<uint32_t> ParseSingleValue(std::string_view str, const std::vector<std::string> &many);
 	std::string FormatSingleValue(uint id) const;
 
-	size_t ParseValue(const char *str) const override;
+	int32_t ParseValue(std::string_view str) const override;
 	std::string FormatValue(const void *object) const override;
 };
 
@@ -302,7 +302,7 @@ struct ManyOfManySettingDesc : OneOfManySettingDesc {
 		OneOfManySettingDesc(save, flags, startup, def, (1 << many.size()) - 1, str, str_help,
 			str_val, cat, pre_check, post_callback, get_title_cb, get_help_cb, get_value_params_cb, get_def_cb, many, many_cnvt) {}
 
-	size_t ParseValue(const char *str) const override;
+	int32_t ParseValue(std::string_view str) const override;
 	std::string FormatValue(const void *object) const override;
 };
 
@@ -334,7 +334,7 @@ struct StringSettingDesc : SettingDesc {
 	PostChangeCallback *post_callback; ///< Callback when the setting has been changed.
 
 	bool IsStringSetting() const override { return true; }
-	void ChangeValue(const void *object, std::string &newval) const;
+	void ChangeValue(const void *object, std::string &&newval) const;
 
 	std::string FormatValue(const void *object) const override;
 	void ParseValue(const IniItem *item, void *object) const override;
@@ -388,11 +388,11 @@ static constexpr const SettingDesc *GetSettingDesc(const SettingVariant &desc)
 
 typedef std::span<const SettingVariant> SettingTable;
 
-const SettingDesc *GetSettingFromName(const std::string_view name);
+const SettingDesc *GetSettingFromName(std::string_view name);
 void GetSaveLoadFromSettingTable(SettingTable settings, std::vector<SaveLoad> &saveloads);
 SettingTable GetSaveLoadSettingTable();
 bool SetSettingValue(const IntSettingDesc *sd, int32_t value, bool force_newgame = false);
-bool SetSettingValue(const StringSettingDesc *sd, const std::string value, bool force_newgame = false);
+bool SetSettingValue(const StringSettingDesc *sd, std::string_view value, bool force_newgame = false);
 
 std::vector<const SettingDesc *> GetFilteredSettingCollection(std::function<bool(const SettingDesc &desc)> func);
 

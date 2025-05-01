@@ -444,7 +444,6 @@ STR_SCENEDIT_TOWN_MENU_PACE_HOUSE                               :Sắp xếp nh�
 
 # Settings menu
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Cấu hình trò chơi
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Thiết Lập
 STR_SETTINGS_MENU_AI_SETTINGS                                   :Thiết lập AI
 STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS                           :Thiết lập kịch bản màn chơi
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Thông số NewGRF
@@ -965,6 +964,7 @@ STR_GAME_OPTIONS_VOLUME                                         :Âm lượng
 STR_GAME_OPTIONS_SFX_VOLUME                                     :Hiệu ứng âm thanh
 STR_GAME_OPTIONS_MUSIC_VOLUME                                   :Âm nhạc
 
+
 STR_GAME_OPTIONS_VOLUME_MARK                                    :{NUM}%
 
 STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Đơn vị tiền tệ
@@ -1050,6 +1050,7 @@ STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Đánh d
 
 STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :{BLACK}Trình điều khiển hiện tại: {STRING}
 
+
 STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :{BLACK}Kích thước giao diện
 STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :{BLACK}Kéo thanh trượt để điều chỉnh kích thước giao diện. Giữ Ctrl để điều chỉnh liên tục
 STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :{BLACK}Tự động nhận dạng kích thước
@@ -1073,7 +1074,6 @@ STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :{BLACK}Sẽ m�
 STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :{BLACK}Xem trước kết quả khảo sát
 STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :{BLACK}Hiển thị kết quả khảo sát ở ván chơi hiện tại
 
-STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}Hình ảnh
 
 STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK}Tần số quét màn hình
 STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :{BLACK}Chọn tần số quét màn hình
@@ -1210,10 +1210,9 @@ STR_CITY_APPROVAL_TOLERANT                                      :Vừa phải
 STR_CITY_APPROVAL_HOSTILE                                       :Khó khăn
 STR_CITY_APPROVAL_PERMISSIVE                                    :Dễ dãi (không có tác dụng với hoạt động xây dựng của công ty)
 
-STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Không có AI nào phù hợp...{}Bạn có thể tải các AI từ mục 'Online Content'
+STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Không có AI nào phù hợp...{}{}Bạn có thể tải các AI từ mục 'Nội dung trực tuyến'
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Thiết lập
+# Settings tree in the Game Options window
 STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Lọc:
 STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Mở xuống tất cả
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Đóng lại tất cả
@@ -2192,7 +2191,6 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Ván Ch�
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Cấu Hình Trò Chơi
 STR_INTRO_HIGHSCORE                                             :{BLACK}Bảng Thành Tích
 STR_INTRO_HELP                                                  :{BLACK}Trợ giúp & hướng dẫn
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Thiết lập
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}Thiết Lập NewGRF
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Nội Dung Trực Tuyến
 STR_INTRO_AI_SETTINGS                                           :{BLACK}Thiết Lập AI
@@ -2214,7 +2212,6 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Chọn k
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Hiển thị cấu hình của trò chơi
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Hiện bảng thành tích
 STR_INTRO_TOOLTIP_HELP                                          :{BLACK}Truy cập vào tài liệu và tài nguyên trực tuyến
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Thiết lập hiển thị
 STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Hiển thị tùy chỉnh NewGRF
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Kiểm tra những nội dung mới & cập nhật để tải về
 STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}Hiển thị tùy chỉnh AI
@@ -2854,6 +2851,9 @@ STR_HOUSE_PICKER_CLASS_ZONE3                                    :Phía ngoài ng
 STR_HOUSE_PICKER_CLASS_ZONE4                                    :Phía trong ngoại ô
 STR_HOUSE_PICKER_CLASS_ZONE5                                    :Nội thành
 
+STR_HOUSE_PICKER_PROTECT_TITLE                                  :Ngăn chặn nâng cấp
+STR_HOUSE_PICKER_PROTECT_OFF                                    :Tắt
+STR_HOUSE_PICKER_PROTECT_ON                                     :Bật
 
 STR_STATION_CLASS_DFLT                                          :Mặc định
 STR_STATION_CLASS_DFLT_STATION                                  :Trạm mặc định
@@ -4016,6 +4016,10 @@ STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}Sản l�
 STR_INDUSTRY_VIEW_CARGO_LIST_EXTENSION                          :, {STRING}{STRING}
 
 STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}Cần cung cấp:
+STR_INDUSTRY_VIEW_ACCEPT_CARGO_SUFFIX                           :{YELLOW}{0:STRING}{BLACK}{3:STRING}
+STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT_SUFFIX                    :{YELLOW}{0:STRING}{BLACK}: {1:CARGO_SHORT} đang chờ{3:STRING}
+STR_INDUSTRY_VIEW_ACCEPT_CARGO_NOSUFFIX                         :{YELLOW}{0:STRING}
+STR_INDUSTRY_VIEW_ACCEPT_CARGO_AMOUNT_NOSUFFIX                  :{YELLOW}{0:STRING}{BLACK}: {1:CARGO_SHORT} đang chờ
 
 STR_CONFIG_GAME_PRODUCTION                                      :{WHITE}Thay đổi sản lượng (bội số của 8, max 2040)
 STR_CONFIG_GAME_PRODUCTION_LEVEL                                :{WHITE}Thay đổi mức sản lượng (theo phần trăm, cao nhất 800%)
@@ -5305,8 +5309,16 @@ STR_ERROR_CAN_T_SELL_SHIP                                       :{WHITE}Không t
 STR_ERROR_CAN_T_SELL_AIRCRAFT                                   :{WHITE}Không thể bán máy bay...
 
 ###length VEHICLE_TYPES
+STR_ERROR_CAN_T_SELL_ALL_TRAIN                                  :{WHITE}Không thể bán tất cả tàu hoả...
+STR_ERROR_CAN_T_SELL_ALL_ROAD_VEHICLE                           :{WHITE}Không thể bán tất cả các xe...
+STR_ERROR_CAN_T_SELL_ALL_SHIP                                   :{WHITE}Không thể bán tất cả tàu thủy...
+STR_ERROR_CAN_T_SELL_ALL_AIRCRAFT                               :{WHITE}Không thể bán tất cả máy bay...
 
 ###length VEHICLE_TYPES
+STR_ERROR_CAN_T_AUTOREPLACE_TRAIN                               :{WHITE}Không thể tự động thay thế tàu hỏa...
+STR_ERROR_CAN_T_AUTOREPLACE_ROAD_VEHICLE                        :{WHITE}Không thể tự động thay thế xe...
+STR_ERROR_CAN_T_AUTOREPLACE_SHIP                                :{WHITE}Không thể tự động thay thế tàu thủy...
+STR_ERROR_CAN_T_AUTOREPLACE_AIRCRAFT                            :{WHITE}Không thể tự động thay thế máy bay...
 
 STR_ERROR_TOO_MANY_VEHICLES_IN_GAME                             :{WHITE}Quá nhiều phương tiện trong trò chơi
 STR_ERROR_CAN_T_CHANGE_SERVICING                                :{WHITE}Không thể thay đổi tần suất bảo trì...

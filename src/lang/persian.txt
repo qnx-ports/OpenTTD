@@ -855,6 +855,7 @@ STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :{BLACK}تنظی
 
 
 
+
 STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}واحد پول
 STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}انتخب واحد پول
 
@@ -911,6 +912,7 @@ STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :{BLACK}برای
 STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}وضوح تصویر
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :{BLACK}وضوح تصویر دلخواه را انتخاب کنید
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :دیگر
+
 
 
 
@@ -1034,7 +1036,7 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :آسان گیر
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}هیچ بسته هوش مصنوعی موجود نیست...{}شما می توانید چندین بسته هوش مصنوعی(AI) را از قسمت محتویات برخط بارگیری کنید
 
-# Settings tree window
+# Settings tree in the Game Options window
 STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}متن فیلتر:
 STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}نمایش همه
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}جمع کردن همه

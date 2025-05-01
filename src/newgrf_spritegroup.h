@@ -10,6 +10,7 @@
 #ifndef NEWGRF_SPRITEGROUP_H
 #define NEWGRF_SPRITEGROUP_H
 
+#include "core/pool_type.hpp"
 #include "town_type.h"
 #include "engine_type.h"
 #include "house_type.h"
@@ -45,6 +46,15 @@ enum SpriteGroupType : uint8_t {
 
 struct SpriteGroup;
 struct ResolverObject;
+using CallbackResult = uint16_t;
+
+/**
+ * Result of resolving sprite groups:
+ * - std::monostate: Failure.
+ * - CallbackResult: Callback result.
+ * - SpriteGroup: ResultSpriteGroup, TileLayoutSpriteGroup, IndustryProductionSpriteGroup
+ */
+using ResolverResult = std::variant<std::monostate, CallbackResult, const SpriteGroup *>;
 
 /* SPRITE_WIDTH is 24. ECS has roughly 30 sprite groups per real sprite.
  * Adding an 'extra' margin would be assuming 64 sprite groups per real
@@ -58,7 +68,7 @@ struct SpriteGroup : SpriteGroupPool::PoolItem<&_spritegroup_pool> {
 protected:
 	SpriteGroup(SpriteGroupType type) : type(type) {}
 	/** Base sprite group resolver */
-	virtual const SpriteGroup *Resolve([[maybe_unused]] ResolverObject &object) const { return this; };
+	virtual ResolverResult Resolve([[maybe_unused]] ResolverObject &object) const { return this; };
 
 public:
 	virtual ~SpriteGroup() = default;
@@ -66,11 +76,7 @@ public:
 	uint32_t nfo_line = 0;
 	SpriteGroupType type{};
 
-	virtual SpriteID GetResult() const { return 0; }
-	virtual uint8_t GetNumResults() const { return 0; }
-	virtual uint16_t GetCallbackResult() const { return CALLBACK_FAILED; }
-
-	static const SpriteGroup *Resolve(const SpriteGroup *group, ResolverObject &object, bool top_level = true);
+	static ResolverResult Resolve(const SpriteGroup *group, ResolverObject &object, bool top_level = true);
 };
 
 
@@ -90,7 +96,7 @@ struct RealSpriteGroup : SpriteGroup {
 	std::vector<const SpriteGroup *> loading{}; ///< List of loading groups (can be SpriteIDs or Callback results)
 
 protected:
-	const SpriteGroup *Resolve(ResolverObject &object) const override;
+	ResolverResult Resolve(ResolverObject &object) const override;
 };
 
 /* Shared by deterministic and random groups. */
@@ -179,7 +185,7 @@ struct DeterministicSpriteGroup : SpriteGroup {
 	const SpriteGroup *error_group = nullptr; // was first range, before sorting ranges
 
 protected:
-	const SpriteGroup *Resolve(ResolverObject &object) const override;
+	ResolverResult Resolve(ResolverObject &object) const override;
 };
 
 enum RandomizedSpriteGroupCompareMode : uint8_t {
@@ -201,7 +207,7 @@ struct RandomizedSpriteGroup : SpriteGroup {
 	std::vector<const SpriteGroup *> groups{}; ///< Take the group with appropriate index:
 
 protected:
-	const SpriteGroup *Resolve(ResolverObject &object) const override;
+	ResolverResult Resolve(ResolverObject &object) const override;
 };
 
 
@@ -212,16 +218,20 @@ struct CallbackResultSpriteGroup : SpriteGroup {
 	 * Creates a spritegroup representing a callback result
 	 * @param value The value that was used to represent this callback result
 	 */
-	explicit CallbackResultSpriteGroup(uint16_t value) : SpriteGroup(SGT_CALLBACK), result(value) {}
+	explicit CallbackResultSpriteGroup(CallbackResult value) : SpriteGroup(SGT_CALLBACK), result(value) {}
 
-	uint16_t result = 0;
-	uint16_t GetCallbackResult() const override { return this->result; }
+	CallbackResult result = 0;
+
+protected:
+	ResolverResult Resolve(ResolverObject &object) const override;
 };
 
 
 /* A result sprite group returns the first SpriteID and the number of
  * sprites in the set */
 struct ResultSpriteGroup : SpriteGroup {
+	static constexpr SpriteGroupType TYPE = SGT_RESULT;
+
 	/**
 	 * Creates a spritegroup representing a sprite number result.
 	 * @param sprite The sprite number.
@@ -229,7 +239,7 @@ struct ResultSpriteGroup : SpriteGroup {
 	 * @return A spritegroup representing the sprite number result.
 	 */
 	ResultSpriteGroup(SpriteID sprite, uint8_t num_sprites) :
-		SpriteGroup(SGT_RESULT),
+		SpriteGroup(TYPE),
 		num_sprites(num_sprites),
 		sprite(sprite)
 	{
@@ -237,16 +247,15 @@ struct ResultSpriteGroup : SpriteGroup {
 
 	uint8_t num_sprites = 0;
 	SpriteID sprite = 0;
-
-	SpriteID GetResult() const override { return this->sprite; }
-	uint8_t GetNumResults() const override { return this->num_sprites; }
 };
 
 /**
  * Action 2 sprite layout for houses, industry tiles, objects and airport tiles.
  */
 struct TileLayoutSpriteGroup : SpriteGroup {
-	TileLayoutSpriteGroup() : SpriteGroup(SGT_TILELAYOUT) {}
+	static constexpr SpriteGroupType TYPE = SGT_TILELAYOUT;
+
+	TileLayoutSpriteGroup() : SpriteGroup(TYPE) {}
 	~TileLayoutSpriteGroup() {}
 
 	NewGRFSpriteLayout dts{};
@@ -255,7 +264,9 @@ struct TileLayoutSpriteGroup : SpriteGroup {
 };
 
 struct IndustryProductionSpriteGroup : SpriteGroup {
-	IndustryProductionSpriteGroup() : SpriteGroup(SGT_INDUSTRY_PRODUCTION) {}
+	static constexpr SpriteGroupType TYPE = SGT_INDUSTRY_PRODUCTION;
+
+	IndustryProductionSpriteGroup() : SpriteGroup(TYPE) {}
 
 	uint8_t version = 0; ///< Production callback version used, or 0xFF if marked invalid
 	uint8_t num_input = 0; ///< How many subtract_input values are valid
@@ -281,7 +292,7 @@ struct ScopeResolver {
 	virtual ~ScopeResolver() = default;
 
 	virtual uint32_t GetRandomBits() const;
-	virtual uint32_t GetTriggers() const;
+	virtual uint32_t GetRandomTriggers() const;
 
 	virtual uint32_t GetVariable(uint8_t variable, [[maybe_unused]] uint32_t parameter, bool &available) const;
 	virtual void StorePSA(uint reg, int32_t value);
@@ -309,6 +320,11 @@ struct ResolverObject {
 
 	virtual ~ResolverObject() = default;
 
+	ResolverResult DoResolve()
+	{
+		return SpriteGroup::Resolve(this->root_spritegroup, *this);
+	}
+
 	ScopeResolver default_scope; ///< Default implementation of the grf scope.
 
 	CallbackID callback{}; ///< Callback being resolved.
@@ -317,8 +333,10 @@ struct ResolverObject {
 
 	uint32_t last_value = 0; ///< Result of most recent DeterministicSpriteGroup (including procedure calls)
 
-	uint32_t waiting_triggers = 0; ///< Waiting triggers to be used by any rerandomisation. (scope independent)
-	uint32_t used_triggers = 0; ///< Subset of cur_triggers, which actually triggered some rerandomisation. (scope independent)
+protected:
+	uint32_t waiting_random_triggers = 0; ///< Waiting triggers to be used by any rerandomisation. (scope independent)
+	uint32_t used_random_triggers = 0; ///< Subset of cur_triggers, which actually triggered some rerandomisation. (scope independent)
+public:
 	std::array<uint32_t, VSG_END> reseed; ///< Collects bits to rerandomise while triggering triggers.
 
 	const GRFFile *grffile = nullptr; ///< GRFFile the resolved SpriteGroup belongs to
@@ -327,32 +345,60 @@ struct ResolverObject {
 	/**
 	 * Resolve SpriteGroup.
 	 * @return Result spritegroup.
+	 * @tparam TSpriteGroup Sprite group type
 	 */
-	const SpriteGroup *Resolve()
+	template <class TSpriteGroup>
+	inline const TSpriteGroup *Resolve()
 	{
-		return SpriteGroup::Resolve(this->root_spritegroup, *this);
+		auto result = this->DoResolve();
+		const auto *group = std::get_if<const SpriteGroup *>(&result);
+		if (group == nullptr || *group == nullptr || (*group)->type != TSpriteGroup::TYPE) return nullptr;
+		return static_cast<const TSpriteGroup *>(*group);
+	}
+
+	/**
+	 * Resolve bits to be rerandomised.
+	 * Access results via:
+	 * - reseed: Bits to rerandomise per scope, for features with proper PARENT rerandomisation. (only industry tiles)
+	 * - GetReseedSum: Bits to rerandomise for SELF scope, for features with broken-by-design PARENT randomisation. (all but industry tiles)
+	 * - GetUsedRandomTriggers: Consumed random triggers to be reset.
+	 */
+	inline void ResolveRerandomisation()
+	{
+		/* The Resolve result has no meaning.
+		 * It can be a SpriteSet, a callback result, or even an invalid SpriteGroup reference (nullptr). */
+		this->DoResolve();
 	}
 
 	/**
 	 * Resolve callback.
 	 * @return Callback result.
 	 */
-	uint16_t ResolveCallback()
+	inline CallbackResult ResolveCallback()
 	{
-		const SpriteGroup *result = Resolve();
-		return result != nullptr ? result->GetCallbackResult() : CALLBACK_FAILED;
+		auto result = this->DoResolve();
+		const auto *value = std::get_if<CallbackResult>(&result);
+		return value != nullptr ? *value : CALLBACK_FAILED;
 	}
 
-	virtual const SpriteGroup *ResolveReal(const RealSpriteGroup *group) const;
+	virtual ResolverResult ResolveReal(const RealSpriteGroup &group) const;
 
 	virtual ScopeResolver *GetScope(VarSpriteGroupScope scope = VSG_SCOPE_SELF, uint8_t relative = 0);
 
 	/**
-	 * Returns the waiting triggers that did not trigger any rerandomisation.
+	 * Used by RandomizedSpriteGroup: Triggers for rerandomisation
 	 */
-	uint32_t GetRemainingTriggers() const
+	uint32_t GetWaitingRandomTriggers() const
 	{
-		return this->waiting_triggers & ~this->used_triggers;
+		return this->waiting_random_triggers;
+	}
+
+	/**
+	 * Used by RandomizedSpriteGroup: Consume triggers.
+	 */
+	void AddUsedRandomTriggers(uint32_t triggers)
+	{
+		this->used_random_triggers |= triggers;
 	}
 
 	/**
@@ -376,8 +422,8 @@ struct ResolverObject {
 	void ResetState()
 	{
 		this->last_value = 0;
-		this->waiting_triggers = 0;
-		this->used_triggers = 0;
+		this->waiting_random_triggers = 0;
+		this->used_random_triggers = 0;
 		this->reseed.fill(0);
 	}
 
@@ -392,6 +438,32 @@ struct ResolverObject {
 	 * and should return an identifier recognisable by the NewGRF developer.
 	 */
 	virtual uint32_t GetDebugID() const { return 0; }
+};
+
+/**
+ * Specialization of ResolverObject with type-safe access to RandomTriggers.
+ */
+template <class RandomTriggers>
+struct SpecializedResolverObject : public ResolverObject {
+	using ResolverObject::ResolverObject;
+
+	/**
+	 * Set waiting triggers for rerandomisation.
+	 * This is scope independent, even though this is broken-by-design in most cases.
+	 */
+	void SetWaitingRandomTriggers(RandomTriggers triggers)
+	{
+		this->waiting_random_triggers = triggers.base();
+	}
+
+	/**
+	 * Get the triggers, which were "consumed" by some rerandomisation.
+	 * This is scope independent, even though this is broken-by-design in most cases.
+	 */
+	RandomTriggers GetUsedRandomTriggers() const
+	{
+		return static_cast<RandomTriggers>(this->used_random_triggers);
+	}
 };
 
 #endif /* NEWGRF_SPRITEGROUP_H */

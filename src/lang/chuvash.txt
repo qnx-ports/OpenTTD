@@ -461,6 +461,7 @@ STR_NEWS_MESSAGE_CAPTION                                        :{WHITE}Пӗлт
 
 
 
+
 ###length 45
 STR_GAME_OPTIONS_CURRENCY_RUR                                   :Вырӑсла тенкӗ
 
@@ -476,6 +477,7 @@ STR_GAME_OPTIONS_FULLSCREEN                                     :{BLACK}Тулл
 
 STR_GAME_OPTIONS_RESOLUTION                                     :{BLACK}Экрана сӑнарлама пултарни
 STR_GAME_OPTIONS_RESOLUTION_OTHER                               :расна
+
 
 
 
@@ -540,7 +542,7 @@ STR_CLIMATE_TOYLAND_LANDSCAPE                                   :Вӑйӑ пах
 ###length 4
 
 
-# Settings tree window
+# Settings tree in the Game Options window
 
 
 

@@ -754,7 +754,6 @@ STR_SCENEDIT_FILE_MENU_QUIT                                     :Выхад
 
 # Settings menu
 STR_SETTINGS_MENU_GAME_OPTIONS                                  :Наладкі гульні
-STR_SETTINGS_MENU_CONFIG_SETTINGS_TREE                          :Наладкі
 STR_SETTINGS_MENU_AI_SETTINGS                                   :Наладкі ШІ
 STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS                           :Наладкі гульнёвых скрыптоў
 STR_SETTINGS_MENU_NEWGRF_SETTINGS                               :Наладкі NewGRF
@@ -1271,6 +1270,7 @@ STR_GAME_OPTIONS_SFX_VOLUME                                     :Гукавыя 
 STR_GAME_OPTIONS_MUSIC_VOLUME                                   :Музыка
 
 
+
 STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Валюта
 STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Выбар валюты
 
@@ -1353,6 +1353,7 @@ STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :{BLACK}Уклю
 
 STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :{BLACK}Відэадрайвер: {STRING}
 
+
 STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :{BLACK}Маштаб інтэрфейсу
 STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :{BLACK}Змяняйце маштаб інтэрфейсу з дапамогай паўзунка. Утрымлівайце Ctrl для дакладнай наладкі.
 STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :{BLACK}Аўтавызначэньне
@@ -1375,7 +1376,6 @@ STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :{BLACK}Адкр
 STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :{BLACK}Прагляд сабраных дадзеных
 STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :{BLACK}Паказаць дадзеныя, сабраныя ў бягучым сеансе і падрыхтаваныя да адпраўкі
 
-STR_GAME_OPTIONS_GRAPHICS                                       :{BLACK}Наладкі ґрафікі
 
 STR_GAME_OPTIONS_REFRESH_RATE                                   :{BLACK}Чашчыня абнаўлення экрана
 STR_GAME_OPTIONS_REFRESH_RATE_TOOLTIP                           :{BLACK}Выбар чашчыні абнаўленьня экрана
@@ -1512,8 +1512,7 @@ STR_CITY_APPROVAL_PERMISSIVE                                    :Дазваля�
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}Модулі штучнага інтэлекту (ШІ/AI) адсутнічаюць.{}Іх можна спампаваць праз сістэму праверкі "анлайн-кантэнту".
 
-# Settings tree window
-STR_CONFIG_SETTING_TREE_CAPTION                                 :{WHITE}Наладкі
+# Settings tree in the Game Options window
 STR_CONFIG_SETTING_FILTER_TITLE                                 :{BLACK}Фільтар:
 STR_CONFIG_SETTING_EXPAND_ALL                                   :{BLACK}Разгарнуць усё
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Згарнуць усё
@@ -2485,7 +2484,6 @@ STR_INTRO_MULTIPLAYER                                           :{BLACK}Сетк
 STR_INTRO_GAME_OPTIONS                                          :{BLACK}Наладкі гульні
 STR_INTRO_HIGHSCORE                                             :{BLACK}Табліца рэкордаў
 STR_INTRO_HELP                                                  :{BLACK}Дапамога і дакументацыя
-STR_INTRO_CONFIG_SETTINGS_TREE                                  :{BLACK}Наладкі
 STR_INTRO_NEWGRF_SETTINGS                                       :{BLACK}Наладкi NewGRF
 STR_INTRO_ONLINE_CONTENT                                        :{BLACK}Праверыць анлайн-кантэнт
 STR_INTRO_AI_SETTINGS                                           :{BLACK}Наладкі ШІ
@@ -2507,7 +2505,6 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}Выбр
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}Адкрыць акно з асноўнымі наладкамі гульні
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}Паказаць табліцу рэкордаў
 STR_INTRO_TOOLTIP_HELP                                          :{BLACK}Спасылкі на дакументацыю і інтэрнэт-рэсурсы
-STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE                          :{BLACK}Адкрыць наладкі
 STR_INTRO_TOOLTIP_NEWGRF_SETTINGS                               :{BLACK}Адкрыць наладкі NewGRF
 STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}Праверыць новы й абноўлены кантэнт, каб спампаваць
 STR_INTRO_TOOLTIP_AI_SETTINGS                                   :{BLACK}Адкрыць наладкі ШІ

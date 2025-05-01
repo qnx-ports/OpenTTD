@@ -331,7 +331,7 @@ static uint32_t GetCountAndDistanceOfClosestInstance(uint8_t local_id, uint32_t 
 		case 0x44: return GetTileOwner(this->tile).base();
 
 		/* Get town zone and Manhattan distance of closest town */
-		case 0x45: return GetTownRadiusGroup(t, this->tile) << 16 | ClampTo<uint16_t>(DistanceManhattan(this->tile, t->xy));
+		case 0x45: return to_underlying(GetTownRadiusGroup(t, this->tile)) << 16 | ClampTo<uint16_t>(DistanceManhattan(this->tile, t->xy));
 
 		/* Get square of Euclidean distance of closest town */
 		case 0x46: return DistanceSquare(this->tile, t->xy);
@@ -386,8 +386,7 @@ ObjectResolverObject::ObjectResolverObject(const ObjectSpec *spec, Object *obj, 
 		CallbackID callback, uint32_t param1, uint32_t param2)
 	: ResolverObject(spec->grf_prop.grffile, callback, param1, param2), object_scope(*this, obj, spec, tile, view)
 {
-	this->root_spritegroup = (obj == nullptr) ? spec->grf_prop.GetSpriteGroup(OBJECT_SPRITE_GROUP_PURCHASE) : nullptr;
-	if (this->root_spritegroup == nullptr) this->root_spritegroup = spec->grf_prop.GetSpriteGroup(OBJECT_SPRITE_GROUP_DEFAULT);
+	this->root_spritegroup = spec->grf_prop.GetSpriteGroup(obj != nullptr);
 }
 
 /**
@@ -474,10 +473,10 @@ void DrawNewObjectTile(TileInfo *ti, const ObjectSpec *spec)
 	Object *o = Object::GetByTile(ti->tile);
 	ObjectResolverObject object(spec, o, ti->tile);
 
-	const SpriteGroup *group = object.Resolve();
-	if (group == nullptr || group->type != SGT_TILELAYOUT) return;
+	const auto *group = object.Resolve<TileLayoutSpriteGroup>();
+	if (group == nullptr) return;
 
-	DrawTileLayout(ti, (const TileLayoutSpriteGroup *)group, spec);
+	DrawTileLayout(ti, group, spec);
 }
 
 /**
@@ -490,10 +489,10 @@ void DrawNewObjectTile(TileInfo *ti, const ObjectSpec *spec)
 void DrawNewObjectTileInGUI(int x, int y, const ObjectSpec *spec, uint8_t view)
 {
 	ObjectResolverObject object(spec, nullptr, INVALID_TILE, view);
-	const SpriteGroup *group = object.Resolve();
-	if (group == nullptr || group->type != SGT_TILELAYOUT) return;
+	const auto *group = object.Resolve<TileLayoutSpriteGroup>();
+	if (group == nullptr) return;
 
-	const DrawTileSprites *dts = ((const TileLayoutSpriteGroup *)group)->ProcessRegisters(nullptr);
+	const DrawTileSprites *dts = group->ProcessRegisters(nullptr);
 
 	PaletteID palette;
 	if (Company::IsValidID(_local_company)) {
@@ -502,7 +501,7 @@ void DrawNewObjectTileInGUI(int x, int y, const ObjectSpec *spec, uint8_t view)
 			const Livery &l = Company::Get(_local_company)->livery[0];
 			palette = SPR_2CCMAP_BASE + l.colour1 + l.colour2 * 16;
 		} else {
-			palette = COMPANY_SPRITE_COLOUR(_local_company);
+			palette = GetCompanyPalette(_local_company);
 		}
 	} else {
 		/* There's no company, so just take the base palette. */
@@ -555,6 +554,14 @@ void AnimateNewObjectTile(TileIndex tile)
 	ObjectAnimationBase::AnimateTile(spec, Object::GetByTile(tile), tile, spec->flags.Test(ObjectFlag::AnimRandomBits));
 }
 
+static bool DoTriggerObjectTileAnimation(Object *o, TileIndex tile, ObjectAnimationTrigger trigger, const ObjectSpec *spec, uint32_t random, uint32_t var18_extra = 0)
+{
+	if (!spec->animation.triggers.Test(trigger)) return false;
+
+	ObjectAnimationBase::ChangeAnimationFrame(CBID_OBJECT_ANIMATION_TRIGGER, spec, o, tile, random, to_underlying(trigger) | var18_extra);
+	return true;
+}
+
 /**
  * Trigger the update of animation on a single tile.
  * @param o       The object that got triggered.
@@ -562,11 +569,9 @@ void AnimateNewObjectTile(TileIndex tile)
  * @param trigger The trigger that is triggered.
  * @param spec    The spec associated with the object.
  */
-void TriggerObjectTileAnimation(Object *o, TileIndex tile, ObjectAnimationTrigger trigger, const ObjectSpec *spec)
+bool TriggerObjectTileAnimation(Object *o, TileIndex tile, ObjectAnimationTrigger trigger, const ObjectSpec *spec)
 {
-	if (!HasBit(spec->animation.triggers, trigger)) return;
-
-	ObjectAnimationBase::ChangeAnimationFrame(CBID_OBJECT_ANIMATION_START_STOP, spec, o, tile, Random(), trigger);
+	return DoTriggerObjectTileAnimation(o, tile, trigger, spec, Random());
 }
 
 /**
@@ -575,11 +580,19 @@ void TriggerObjectTileAnimation(Object *o, TileIndex tile, ObjectAnimationTrigge
  * @param trigger The trigger that is triggered.
  * @param spec    The spec associated with the object.
  */
-void TriggerObjectAnimation(Object *o, ObjectAnimationTrigger trigger, const ObjectSpec *spec)
+bool TriggerObjectAnimation(Object *o, ObjectAnimationTrigger trigger, const ObjectSpec *spec)
 {
-	if (!HasBit(spec->animation.triggers, trigger)) return;
+	if (!spec->animation.triggers.Test(trigger)) return false;
 
+	bool ret = true;
+	uint32_t random = Random();
 	for (TileIndex tile : o->location) {
-		TriggerObjectTileAnimation(o, tile, trigger, spec);
+		if (DoTriggerObjectTileAnimation(o, tile, trigger, spec, random)) {
+			SB(random, 0, 16, Random());
+		} else {
+			ret = false;
+		}
 	}
+
+	return ret;
 }

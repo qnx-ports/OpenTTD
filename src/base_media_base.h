@@ -16,8 +16,9 @@
 #include "3rdparty/md5/md5.h"
 #include <unordered_map>
 
-/* Forward declare these; can't do 'struct X' in functions as older GCCs barf on that */
 struct IniFile;
+struct IniGroup;
+struct IniItem;
 struct ContentInfo;
 
 /** Structure holding filename and MD5 information about a single file */
@@ -47,7 +48,7 @@ template <class T> struct BaseSetTraits;
  */
 template <class T>
 struct BaseSet {
-	typedef std::unordered_map<std::string, std::string> TranslatedStrings;
+	typedef std::unordered_map<std::string, std::string, StringHash, std::equal_to<>> TranslatedStrings;
 
 	/** Number of files in this set */
 	static constexpr size_t NUM_FILES = BaseSetTraits<T>::num_files;
@@ -62,7 +63,7 @@ struct BaseSet {
 	std::string url;               ///< URL for information about the base set
 	TranslatedStrings description; ///< Description of the base set
 	uint32_t shortname = 0; ///< Four letter short variant of the name
-	uint32_t version = 0; ///< The version of this base set
+	std::vector<uint32_t> version; ///< The version of this base set
 	bool fallback = false; ///< This set is a fallback set, i.e. it should be used only as last resort
 
 	std::array<MD5File, BaseSet<T>::NUM_FILES> files{}; ///< All files part of this set
@@ -96,6 +97,9 @@ struct BaseSet {
 		return BaseSet<T>::NUM_FILES - this->valid_files;
 	}
 
+	void LogError(std::string_view full_filename, std::string_view detail, int level = 0) const;
+	const IniItem *GetMandatoryItem(std::string_view full_filename, const IniGroup &group, std::string_view name) const;
+
 	bool FillSetDetails(const IniFile &ini, const std::string &path, const std::string &full_filename, bool allow_empty_filename = true);
 	void CopyCompatibleConfig([[maybe_unused]] const T &src) {}
 
@@ -107,7 +111,7 @@ struct BaseSet {
 	 * @param isocode the isocode to search for
 	 * @return the description
 	 */
-	const std::string &GetDescription(const std::string &isocode) const
+	const std::string &GetDescription(std::string_view isocode) const
 	{
 		if (!isocode.empty()) {
 			/* First the full ISO code */
@@ -176,7 +180,7 @@ protected:
 	 * Get the extension that is used to identify this set.
 	 * @return the extension
 	 */
-	static const char *GetExtension();
+	static std::string_view GetExtension();
 public:
 	/**
 	 * Determine the graphics pack that has to be used.
@@ -211,7 +215,7 @@ public:
 	 * @param md5sum whether to check the MD5 checksum
 	 * @return true iff we have an set matching.
 	 */
-	static bool HasSet(const ContentInfo *ci, bool md5sum);
+	static bool HasSet(const ContentInfo &ci, bool md5sum);
 };
 
 /**
@@ -219,9 +223,9 @@ public:
  * @param ci The content info to compare it to.
  * @param md5sum Should the MD5 checksum be tested as well?
  * @param s The list with sets.
- * @return The filename of the first file of the base set, or \c nullptr if there is no match.
+ * @return The filename of the first file of the base set, or \c std::nullopt if there is no match.
  */
 template <class Tbase_set>
-const char *TryGetBaseSetFile(const ContentInfo *ci, bool md5sum, const Tbase_set *s);
+std::optional<std::string_view> TryGetBaseSetFile(const ContentInfo &ci, bool md5sum, const Tbase_set *s);
 
 #endif /* BASE_MEDIA_BASE_H */

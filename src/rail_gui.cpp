@@ -18,6 +18,7 @@
 #include "command_func.h"
 #include "waypoint_func.h"
 #include "newgrf_badge.h"
+#include "newgrf_badge_gui.h"
 #include "newgrf_station.h"
 #include "company_base.h"
 #include "strings_func.h"
@@ -1465,7 +1466,7 @@ private:
 		Point offset;
 		Dimension sprite_size = GetSpriteSize(image, &offset);
 		Rect ir = r.Shrink(WidgetDimensions::scaled.imgbtn);
-		int x = CenterBounds(ir.left, ir.right, sprite_size.width - offset.x) - offset.x; // centered
+		int x = CentreBounds(ir.left, ir.right, sprite_size.width - offset.x) - offset.x; // centered
 		int y = ir.top - sig_sprite_bottom_offset +
 				(ir.Height() + sig_sprite_size.height) / 2; // aligned to bottom
 
