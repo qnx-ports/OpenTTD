@@ -147,7 +147,17 @@ static sigset_t SetSignals(void(*handler)(int))
 	}
 
 	struct sigaction sa{};
+	memset(&sa, 0, sizeof(sa));
+
+#ifdef __QNX__
+#define SA_RESTART 0
+#endif
+
 	sa.sa_flags = SA_RESTART;
+
+#ifdef __QNX__
+#undef SA_RESTART
+#endif
 
 	sigemptyset(&sa.sa_mask);
 	sa.sa_handler = handler;

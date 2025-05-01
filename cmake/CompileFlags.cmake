@@ -61,7 +61,7 @@ macro(compile_flags)
                 -Wno-multichar
             )
         endif()
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" OR CMAKE_CXX_COMPILER_ID STREQUAL "QCC")
         add_compile_options(
             -W
             -Wall
@@ -99,9 +99,12 @@ macro(compile_flags)
             endif()
         endif()
 
-        if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        #OR CMAKE_CXX_COMPILER_ID STREQUAL "QCC"
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
+            if(NOT QNX)
             include(CheckCXXCompilerFlag)
             check_cxx_compiler_flag("-flifetime-dse=1" LIFETIME_DSE_FOUND)
+            endif()
 
             add_compile_options(
                 # GCC 4.2+ automatically assumes that signed overflows do

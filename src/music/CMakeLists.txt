@@ -1,4 +1,4 @@
-if(NOT OPTION_DEDICATED)
+if(NOT OPTION_DEDICATED AND NOT QNX)
     add_files(
         allegro_m.cpp
         allegro_m.h
