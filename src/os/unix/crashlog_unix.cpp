@@ -147,7 +147,6 @@ static sigset_t SetSignals(void(*handler)(int))
 	}
 
 	struct sigaction sa{};
-	memset(&sa, 0, sizeof(sa));
 
 #ifdef __QNX__
 #define SA_RESTART 0
