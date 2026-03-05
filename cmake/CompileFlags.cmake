@@ -26,10 +26,14 @@ macro(compile_flags)
 
     # Add some -D flags for Debug builds. We cannot use add_definitions(), because
     # it does not appear to support the $<> tags.
-    add_compile_options(
-        "$<$<CONFIG:Debug>:-D_DEBUG>"
-        "$<$<NOT:$<CONFIG:Debug>>:-D_FORTIFY_SOURCE=2>" # FORTIFY_SOURCE should only be used in non-debug builds (requires -O1+)
-    )
+    if (QNX)
+	    add_compile_options( "$<$<CONFIG:Debug>:-D_DEBUG>")
+    else()
+	    add_compile_options(
+		"$<$<CONFIG:Debug>:-D_DEBUG>"
+		"$<$<NOT:$<CONFIG:Debug>>:-D_FORTIFY_SOURCE=2>" # FORTIFY_SOURCE should only be used in non-debug builds (requires -O1+)
+	    )
+    endif()
     if(MINGW)
         add_link_options(
             "$<$<NOT:$<CONFIG:Debug>>:-fstack-protector>" # Prevent undefined references when _FORTIFY_SOURCE > 0

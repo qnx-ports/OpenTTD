@@ -42,8 +42,8 @@ set_directory_options()
 include(Static)
 set_static_if_needed()
 
-if(NOT QNX)
-message(STATUS "NOT QNX")
+if(QNX)
+message(STATUS "QNX")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 endif()
@@ -156,9 +156,7 @@ if(NOT OPTION_DEDICATED)
                 find_package(Fontconfig)
             endif()
             endif()
-            if(NOT QNX)
             find_package(Harfbuzz)
-            endif()
             find_package(ICU OPTIONAL_COMPONENTS i18n uc)
         endif()
     endif()
@@ -296,6 +294,7 @@ target_link_libraries(openttd_lib
     openttd::languages
     openttd::settings
     openttd::script_api
+    socket
 )
 endif()
 
@@ -325,9 +324,7 @@ endif()
 set_target_properties(openttd PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 include(LinkPackage)
-if(NOT QNX)
 link_package(PNG TARGET PNG::PNG ENCOURAGED)
-endif()
 link_package(ZLIB TARGET ZLIB::ZLIB ENCOURAGED)
 link_package(LIBLZMA TARGET LibLZMA::LibLZMA ENCOURAGED)
 link_package(LZO)
